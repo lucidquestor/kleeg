@@ -3,34 +3,56 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { DeleteProjectButton } from "@/components/projects/DeleteProjectButton";
-import { SignOutButton } from "@/components/dashboard/SignOutButton";
-import { KleegLogo } from "@/components/ui/icons";
+import { ActionIcon, KleegLogo } from "@/components/ui/icons";
 import type { Project } from "@/lib/types";
 import { cn } from "@/lib/cn";
 
 interface AppSidebarProps {
   projects: Project[];
+  allProjectsCount: number;
   activeProjectId?: string;
+  search: string;
+  onSearchChange: (value: string) => void;
 }
 
-export function AppSidebar({ projects, activeProjectId }: AppSidebarProps) {
+export function AppSidebar({
+  projects,
+  allProjectsCount,
+  activeProjectId,
+  search,
+  onSearchChange,
+}: AppSidebarProps) {
   const pathname = usePathname();
   const onDashboard = pathname === "/dashboard";
 
   return (
-    <aside className="workspace-sidebar lg:min-h-screen">
-      <div className="border-b border-white/10 p-4">
+    <aside className="workspace-sidebar">
+      <div className="shrink-0 border-b border-white/10 p-4">
         <Link href="/dashboard">
           <KleegLogo wordmarkClassName="text-white" />
         </Link>
       </div>
 
-      <div className="flex flex-1 flex-col p-4">
+      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto p-4">
         <p className="text-[10px] font-semibold uppercase tracking-wider text-sidebar-muted">
           Projects
         </p>
 
-        <nav className="mt-2 space-y-1">
+        <div className="relative mt-2">
+          <ActionIcon
+            name="search"
+            className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-sidebar-muted"
+          />
+          <input
+            type="search"
+            value={search}
+            onChange={(e) => onSearchChange(e.target.value)}
+            placeholder="Search projects…"
+            className="w-full rounded-lg border border-white/10 bg-white/5 py-2 pl-8 pr-3 text-xs text-white outline-none placeholder:text-sidebar-muted focus:border-brand-400/50 focus:bg-white/10"
+          />
+        </div>
+
+        <nav className="mt-3 space-y-1">
           <Link
             href="/dashboard"
             className={cn(
@@ -75,6 +97,10 @@ export function AppSidebar({ projects, activeProjectId }: AppSidebarProps) {
               </div>
             );
           })}
+
+          {search && projects.length === 0 ? (
+            <p className="px-3 py-2 text-xs text-sidebar-muted">No projects match.</p>
+          ) : null}
         </nav>
 
         {!activeProjectId ? (
@@ -85,12 +111,13 @@ export function AppSidebar({ projects, activeProjectId }: AppSidebarProps) {
             <p className="mt-1.5 text-xs leading-relaxed text-zinc-300">
               Edit AI output and Kleeg saves your corrections for future models.
             </p>
+            {allProjectsCount > 0 ? (
+              <p className="mt-2 text-[10px] text-sidebar-muted">
+                {allProjectsCount} project{allProjectsCount === 1 ? "" : "s"} total
+              </p>
+            ) : null}
           </div>
         ) : null}
-      </div>
-
-      <div className="border-t border-white/10 p-4">
-        <SignOutButton variant="sidebar" />
       </div>
     </aside>
   );

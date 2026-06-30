@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { AppSidebar } from "@/components/layout/AppSidebar";
+import { AppShellClient } from "@/components/layout/AppShellClient";
 import { createClient } from "@/lib/supabase/server";
 import type { Project } from "@/lib/types";
 
@@ -26,12 +26,12 @@ export async function AppShell({
     .order("updated_at", { ascending: false });
 
   return (
-    <div className="workspace-shell flex min-h-screen flex-col lg:flex-row">
-      <AppSidebar
-        projects={(projects ?? []) as Project[]}
-        activeProjectId={activeProjectId}
-      />
-      <div className="workspace-main min-h-0 flex-1 bg-surface">{children}</div>
-    </div>
+    <AppShellClient
+      projects={(projects ?? []) as Project[]}
+      activeProjectId={activeProjectId}
+      userEmail={user.email ?? "user"}
+    >
+      {children}
+    </AppShellClient>
   );
 }
