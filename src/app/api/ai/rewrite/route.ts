@@ -10,10 +10,11 @@ const ACTION_PROMPTS: Record<string, string> = {
   shorten: "Shorten this while keeping the key points. Return only the shortened text.",
   translate_en:
     "Translate this to natural English. Return only the translation.",
-  translate_he:
-    "Translate this to modern Hebrew for everyday business use. Use standard unpointed Hebrew — NO nikud/nekudos/vowel points. Return only the translation.",
-  translate_yi:
-    "Translate this to Yiddish using natural everyday spelling in Hebrew letters. NO nekudos, nikud, or vowel points. Return only the translation.",
+  translate_he: `Translate the following to natural modern Hebrew for everyday use.
+Use correct grammar and standard unpointed spelling — NO nikud/nekudos. Return only the translation.`,
+  translate_yi: `Translate the following to natural, grammatically correct Yiddish in Hebrew letters.
+Use authentic Yiddish phrasing — not English words spelled in Hebrew letters.
+NO nekudos/nikud. Return only the translation.`,
   summarize: "Summarize this clearly. Return only the summary.",
   email: `Turn this into a well-structured professional email. Use exactly this format with blank lines between sections:
 
@@ -78,7 +79,7 @@ export async function POST(request: Request) {
       requestedMode ??
       (action.startsWith("translate_") || action === "email" ? "best" : "writing");
 
-    const content = await rewriteText(text, prompt, mode);
+    const content = await rewriteText(text, prompt, mode, action);
 
     return NextResponse.json({ content });
   } catch (error) {

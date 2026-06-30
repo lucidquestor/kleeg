@@ -1,4 +1,5 @@
 import type { ModelMode } from "@/lib/types";
+import { getLanguageGuideForAction, isTranslationAction } from "@/lib/ai/language-guides";
 
 export interface GatewayMessage {
   role: "user" | "assistant" | "system";
@@ -9,6 +10,7 @@ export interface ChatRequest {
   messages: GatewayMessage[];
   mode: ModelMode;
   projectContext?: string;
+  temperature?: number;
 }
 
 export interface ChatResponse {
@@ -73,7 +75,9 @@ export async function routeChat(request: ChatRequest): Promise<ChatResponse> {
       ...buildSystemMessages(request.projectContext),
       ...request.messages.filter((m) => m.role !== "system"),
     ],
-    temperature: request.mode === "writing" ? 0.7 : 0.4,
+    temperature:
+      request.temperature ??
+      (request.mode === "writing" ? 0.7 : 0.4),
   });
 
   const content = completion.choices[0]?.message?.content?.trim();
@@ -91,17 +95,26 @@ export async function routeChat(request: ChatRequest): Promise<ChatResponse> {
 
 export async function rewriteText(
   text: string,
-  action: string,
+  actionPrompt: string,
   mode: ModelMode = "writing",
+  actionId?: string,
 ): Promise<string> {
+  const languageGuide = actionId ? getLanguageGuideForAction(actionId) : undefined;
+  const messages: GatewayMessage[] = [];
+
+  if (languageGuide) {
+    messages.push({ role: "system", content: languageGuide });
+  }
+
+  messages.push({
+    role: "user",
+    content: `${actionPrompt}\n\n${text}`,
+  });
+
   const response = await routeChat({
     mode,
-    messages: [
-      {
-        role: "user",
-        content: `${action}:\n\n${text}`,
-      },
-    ],
+    messages,
+    temperature: actionId && isTranslationAction(actionId) ? 0.2 : undefined,
   });
 
   return response.content;
