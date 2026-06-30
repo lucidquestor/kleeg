@@ -48,15 +48,15 @@ export function NewProjectForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="card p-6">
-      <h2 className="text-lg font-semibold text-ink">New project</h2>
-      <p className="mt-1 text-sm text-ink-muted">
+    <form onSubmit={handleSubmit} className="card-app p-6">
+      <h2 className="text-lg font-semibold text-white">New project</h2>
+      <p className="mt-1 text-sm text-app-muted">
         Create a workspace for chat, documents, and AI actions.
       </p>
 
       <div className="mt-5 space-y-4">
         <div>
-          <label htmlFor="project-name" className="mb-1.5 block text-sm font-medium text-ink">
+          <label htmlFor="project-name" className="mb-1.5 block text-sm font-medium text-zinc-200">
             Name
           </label>
           <input
@@ -64,14 +64,14 @@ export function NewProjectForm() {
             required
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="input-field"
+            className="input-app"
             placeholder="Client proposal, website build, newsletter…"
           />
         </div>
         <div>
           <label
             htmlFor="project-description"
-            className="mb-1.5 block text-sm font-medium text-ink"
+            className="mb-1.5 block text-sm font-medium text-zinc-200"
           >
             Description (optional)
           </label>
@@ -79,14 +79,14 @@ export function NewProjectForm() {
             id="project-description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="input-field min-h-24 resize-y"
+            className="input-app min-h-24 resize-y"
             placeholder="What is this project about?"
           />
         </div>
         {error ? (
-          <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>
+          <p className="rounded-xl bg-red-500/10 px-4 py-3 text-sm text-red-300">{error}</p>
         ) : null}
-        <button type="submit" disabled={loading} className="btn-primary">
+        <button type="submit" disabled={loading} className="btn-primary w-full">
           {loading ? "Creating…" : "Create project"}
         </button>
       </div>

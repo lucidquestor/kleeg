@@ -34,14 +34,21 @@ export function KleegMark({ className }: { className?: string }) {
       aria-hidden
     >
       <rect width="40" height="40" rx="11" fill="url(#kleeg-mark-bg)" />
-      <path
-        d="M12 28V12h4.5l5.2 9.4V12H26v16h-4.4l-5.3-9.6V28H12z"
+      <text
+        x="20"
+        y="27.5"
+        textAnchor="middle"
         fill="white"
-      />
-      <circle cx="30" cy="11" r="3" fill="#FBBF24" opacity="0.95" />
+        fontFamily="system-ui, -apple-system, sans-serif"
+        fontSize="22"
+        fontWeight="700"
+      >
+        K
+      </text>
+      <circle cx="31" cy="10" r="3.5" fill="#FBBF24" />
       <defs>
         <linearGradient id="kleeg-mark-bg" x1="8" y1="4" x2="34" y2="36">
-          <stop stopColor="#8B5CF6" />
+          <stop stopColor="#A78BFA" />
           <stop offset="1" stopColor="#6D28D9" />
         </linearGradient>
       </defs>
@@ -53,8 +60,18 @@ export function KleegLogoSvg(props: SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 120 40" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
       <rect width="40" height="40" rx="11" fill="url(#kleeg-logo-bg)" />
-      <path d="M12 28V12h4.5l5.2 9.4V12H26v16h-4.4l-5.3-9.6V28H12z" fill="white" />
-      <circle cx="30" cy="11" r="3" fill="#FBBF24" />
+      <text
+        x="20"
+        y="27.5"
+        textAnchor="middle"
+        fill="white"
+        fontFamily="system-ui, sans-serif"
+        fontSize="22"
+        fontWeight="700"
+      >
+        K
+      </text>
+      <circle cx="31" cy="10" r="3.5" fill="#FBBF24" />
       <text
         x="48"
         y="27"

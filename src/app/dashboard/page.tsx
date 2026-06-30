@@ -19,11 +19,11 @@ export default async function DashboardPage() {
     <AppShell>
       <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:py-10">
         <div className="mb-8">
-          <p className="text-xs font-semibold uppercase tracking-wider text-brand-600">
+          <p className="text-xs font-semibold uppercase tracking-wider text-brand-400">
             Workspace
           </p>
-          <h1 className="mt-2 text-3xl font-semibold text-ink">Your projects</h1>
-          <p className="mt-2 max-w-xl text-ink-muted">
+          <h1 className="mt-2 text-3xl font-semibold text-white">Your projects</h1>
+          <p className="mt-2 max-w-xl text-app-muted">
             Pick a project from the sidebar or create a new one below.
           </p>
         </div>
@@ -37,8 +37,8 @@ export default async function DashboardPage() {
                 ))}
               </div>
             ) : (
-              <div className="card px-6 py-12 text-center">
-                <p className="text-sm text-ink-muted">
+              <div className="card-app px-6 py-12 text-center">
+                <p className="text-sm text-app-muted">
                   No projects yet. Create your first workspace on the right.
                 </p>
               </div>

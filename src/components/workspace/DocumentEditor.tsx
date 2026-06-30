@@ -201,17 +201,17 @@ export function DocumentEditor({ projectId, document }: DocumentEditorProps) {
 
   return (
     <div className="workspace-panel h-full">
-      <div className="border-b border-border bg-gradient-to-r from-brand-50/50 to-white px-5 py-4">
+      <div className="border-b border-white/10 bg-app-panel-hover px-5 py-4">
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="w-full bg-transparent text-base font-semibold text-ink outline-none"
+          className="w-full bg-transparent text-base font-semibold text-white outline-none placeholder:text-zinc-500"
           placeholder="Document title"
         />
         <div className="mt-4 space-y-3">
           {ACTION_GROUPS.map((group) => (
             <div key={group.label}>
-              <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-ink-muted">
+              <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-zinc-500">
                 {group.label}
               </p>
               <div className="flex flex-wrap gap-1.5">
@@ -234,14 +234,14 @@ export function DocumentEditor({ projectId, document }: DocumentEditorProps) {
             </div>
           ))}
         </div>
-        <div className="mt-3 flex items-center gap-3 text-xs text-ink-muted">
-          {saving ? <span className="text-brand-600">Saving…</span> : null}
-          {status ? <span className="font-medium text-brand-700">{status}</span> : null}
-          {error ? <span className="text-red-600">{error}</span> : null}
+        <div className="mt-3 flex items-center gap-3 text-xs text-zinc-500">
+          {saving ? <span className="text-brand-400">Saving…</span> : null}
+          {status ? <span className="font-medium text-brand-300">{status}</span> : null}
+          {error ? <span className="text-red-400">{error}</span> : null}
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto bg-white">
+      <div className="flex-1 overflow-y-auto bg-app-panel">
         <EditorContent editor={editor} />
       </div>
     </div>

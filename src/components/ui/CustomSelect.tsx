@@ -16,6 +16,7 @@ interface CustomSelectProps<T extends string = string> {
   onChange: (value: T) => void;
   className?: string;
   ariaLabel?: string;
+  variant?: "light" | "dark";
 }
 
 export function CustomSelect<T extends string = string>({
@@ -24,10 +25,12 @@ export function CustomSelect<T extends string = string>({
   onChange,
   className,
   ariaLabel = "Select option",
+  variant = "dark",
 }: CustomSelectProps<T>) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const selected = options.find((o) => o.value === value) ?? options[0];
+  const isDark = variant === "dark";
 
   useEffect(() => {
     function handleClick(event: MouseEvent) {
@@ -46,18 +49,26 @@ export function CustomSelect<T extends string = string>({
         aria-label={ariaLabel}
         aria-expanded={open}
         onClick={() => setOpen((current) => !current)}
-        className="flex min-w-[148px] items-center justify-between gap-2 rounded-xl border border-border bg-white px-3 py-2 text-left text-xs font-medium text-ink shadow-sm transition hover:border-brand-300 hover:bg-brand-50/40"
+        className={cn(
+          "flex min-w-[148px] items-center justify-between gap-2 rounded-xl border px-3 py-2 text-left text-xs font-medium shadow-sm transition",
+          isDark
+            ? "border-white/10 bg-white/5 text-zinc-200 hover:border-brand-400/40 hover:bg-brand-500/10"
+            : "border-border bg-white text-ink hover:border-brand-300 hover:bg-brand-50/40",
+        )}
       >
         <span className="truncate">{selected.label}</span>
         <ActionIcon
           name="chevron"
-          className={cn("text-ink-muted transition", open && "rotate-180")}
+          className={cn(isDark ? "text-zinc-400" : "text-ink-muted", "transition", open && "rotate-180")}
         />
       </button>
 
       {open ? (
         <ul
-          className="absolute right-0 z-50 mt-1.5 min-w-full overflow-hidden rounded-xl border border-border bg-white py-1 shadow-lg shadow-black/10"
+          className={cn(
+            "absolute right-0 z-50 mt-1.5 min-w-full overflow-hidden rounded-xl border py-1 shadow-lg shadow-black/30",
+            isDark ? "border-white/10 bg-[#1f1f25]" : "border-border bg-white shadow-black/10",
+          )}
           role="listbox"
         >
           {options.map((option) => (
@@ -69,13 +80,23 @@ export function CustomSelect<T extends string = string>({
                   setOpen(false);
                 }}
                 className={cn(
-                  "flex w-full flex-col px-3 py-2 text-left transition hover:bg-brand-50",
-                  option.value === value && "bg-brand-50 text-brand-800",
+                  "flex w-full flex-col px-3 py-2 text-left transition",
+                  isDark
+                    ? cn(
+                        "hover:bg-white/10",
+                        option.value === value && "bg-brand-500/15 text-brand-200",
+                      )
+                    : cn(
+                        "hover:bg-brand-50",
+                        option.value === value && "bg-brand-50 text-brand-800",
+                      ),
                 )}
               >
                 <span className="text-xs font-medium">{option.label}</span>
                 {option.description ? (
-                  <span className="text-[10px] text-ink-muted">{option.description}</span>
+                  <span className={cn("text-[10px]", isDark ? "text-zinc-500" : "text-ink-muted")}>
+                    {option.description}
+                  </span>
                 ) : null}
               </button>
             </li>

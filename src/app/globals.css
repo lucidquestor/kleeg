@@ -23,6 +23,12 @@
   --color-sidebar-muted: #a1a1aa;
   --color-border: #e4e4e7;
   --color-panel: #ffffff;
+
+  --color-app-bg: #131316;
+  --color-app-panel: #1a1a20;
+  --color-app-panel-hover: #22222a;
+  --color-app-text: #f4f4f5;
+  --color-app-muted: #a1a1aa;
 }
 
 @layer base {
@@ -65,11 +71,23 @@
   }
 
   .workspace-main {
-    @apply min-h-screen flex-1 transition-[margin,padding] duration-200 ease-out;
+    @apply min-h-screen flex-1 bg-app-bg text-app-text transition-[margin,padding] duration-200 ease-out;
+  }
+
+  .card-app {
+    @apply rounded-2xl border border-white/10 bg-app-panel shadow-lg shadow-black/30;
+  }
+
+  .card-app-hover {
+    @apply transition hover:-translate-y-0.5 hover:border-brand-400/30 hover:bg-app-panel-hover;
+  }
+
+  .input-app {
+    @apply w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-app-text outline-none transition placeholder:text-zinc-500 focus:border-brand-400/50 focus:ring-2 focus:ring-brand-500/20;
   }
 
   .workspace-panel {
-    @apply flex min-h-0 flex-col overflow-hidden rounded-2xl border border-border/80 bg-panel shadow-lg shadow-black/5;
+    @apply flex min-h-0 flex-col overflow-hidden rounded-2xl border border-white/10 bg-app-panel shadow-lg shadow-black/30;
   }
 
   .workspace-sidebar {
@@ -77,11 +95,11 @@
   }
 
   .action-chip {
-    @apply inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface px-2.5 py-1.5 text-xs font-medium text-ink transition hover:border-brand-300 hover:bg-brand-50 hover:text-brand-800 disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-2.5 py-1.5 text-xs font-medium text-zinc-200 transition hover:border-brand-400/40 hover:bg-brand-500/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .action-chip-active {
-    @apply border-brand-400 bg-brand-50 text-brand-800;
+    @apply border-brand-400/50 bg-brand-500/15 text-brand-200;
   }
 
   .hero-gradient {
@@ -96,12 +114,12 @@
   }
 
   .chat-bubble-assistant {
-    @apply max-w-[92%] rounded-2xl rounded-bl-md border border-border bg-white px-4 py-3 text-sm leading-relaxed text-ink shadow-sm;
+    @apply max-w-[92%] rounded-2xl rounded-bl-md border border-white/10 bg-app-panel-hover px-4 py-3 text-sm leading-relaxed text-zinc-100 shadow-sm;
   }
 }
 
 .ProseMirror {
-  @apply min-h-[360px] px-6 py-5 text-[15px] leading-relaxed text-ink outline-none;
+  @apply min-h-[360px] px-6 py-5 text-[15px] leading-relaxed text-zinc-100 outline-none;
 }
 
 .ProseMirror[dir="rtl"] {
@@ -109,7 +127,7 @@
 }
 
 .ProseMirror p.is-editor-empty:first-child::before {
-  @apply pointer-events-none float-left h-0 text-ink-muted/50;
+  @apply pointer-events-none float-left h-0 text-zinc-500;
   content: attr(data-placeholder);
 }
 

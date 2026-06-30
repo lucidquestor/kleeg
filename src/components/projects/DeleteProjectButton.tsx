@@ -63,7 +63,7 @@ export function DeleteProjectButton({
         }}
         className={cn(
           variant === "card"
-            ? "rounded-lg p-1.5 text-ink-muted opacity-0 transition group-hover:opacity-100 hover:bg-red-50 hover:text-red-600"
+            ? "rounded-lg p-1.5 text-zinc-500 opacity-0 transition group-hover:opacity-100 hover:bg-red-500/15 hover:text-red-400"
             : cn(
                 "mr-1.5 shrink-0 rounded-md p-1.5 transition",
                 active

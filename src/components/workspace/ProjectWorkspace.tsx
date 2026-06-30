@@ -27,7 +27,7 @@ export function ProjectWorkspace({
         <DocumentEditor projectId={project.id} document={document} />
       </div>
 
-      <div className="w-full border-t border-border p-4 lg:w-[380px] lg:shrink-0 lg:border-l lg:border-t-0 lg:p-5">
+      <div className="w-full border-t border-white/10 p-4 lg:w-[380px] lg:shrink-0 lg:border-l lg:p-5">
         <ProjectChat
           projectId={project.id}
           initialMessages={messages}

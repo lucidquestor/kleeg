@@ -84,10 +84,10 @@ export function ProjectChat({
 
   return (
     <div className="workspace-panel h-full lg:max-h-[calc(100vh-2.5rem)]">
-      <div className="flex items-center justify-between border-b border-border bg-gradient-to-r from-white to-brand-50/40 px-4 py-4">
+      <div className="flex items-center justify-between border-b border-white/10 bg-app-panel-hover px-4 py-4">
         <div>
-          <h2 className="text-sm font-semibold text-ink">Assistant</h2>
-          <p className="text-xs text-ink-muted">Knows your project context</p>
+          <h2 className="text-sm font-semibold text-white">Assistant</h2>
+          <p className="text-xs text-zinc-500">Knows your project context</p>
         </div>
         <CustomSelect
           value={mode}
@@ -112,9 +112,9 @@ export function ProjectChat({
 
       <div className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
         {messages.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-brand-200 bg-brand-50/50 px-4 py-10 text-center">
-            <p className="text-sm font-medium text-brand-800">Ask Kleeg anything</p>
-            <p className="mt-1 text-xs text-ink-muted">
+          <div className="rounded-2xl border border-dashed border-brand-400/30 bg-brand-500/10 px-4 py-10 text-center">
+            <p className="text-sm font-medium text-brand-200">Ask Kleeg anything</p>
+            <p className="mt-1 text-xs text-zinc-500">
               Plan, draft, translate, or summarize work for this project.
             </p>
           </div>
@@ -137,7 +137,7 @@ export function ProjectChat({
         ))}
 
         {loading ? (
-          <div className="chat-bubble-assistant animate-pulse text-ink-muted">
+          <div className="chat-bubble-assistant animate-pulse text-zinc-500">
             Kleeg is thinking…
           </div>
         ) : null}
@@ -145,16 +145,16 @@ export function ProjectChat({
         <div ref={bottomRef} />
       </div>
 
-      <form onSubmit={handleSubmit} className="border-t border-border bg-white p-4">
+      <form onSubmit={handleSubmit} className="border-t border-white/10 bg-app-panel p-4">
         {error ? (
-          <p className="mb-3 rounded-xl bg-red-50 px-3 py-2 text-xs text-red-700">{error}</p>
+          <p className="mb-3 rounded-xl bg-red-500/10 px-3 py-2 text-xs text-red-300">{error}</p>
         ) : null}
         <div className="flex gap-2">
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
             rows={2}
-            className="input-field min-h-[52px] flex-1 resize-none"
+            className="input-app min-h-[52px] flex-1 resize-none"
             placeholder="Ask Kleeg anything about this project…"
             dir="auto"
           />

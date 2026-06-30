@@ -15,11 +15,11 @@ export default async function SettingsPage() {
   return (
     <AppShell>
       <main className="mx-auto max-w-2xl px-4 py-8 sm:px-6">
-        <p className="text-xs font-semibold uppercase tracking-wider text-brand-600">
+        <p className="text-xs font-semibold uppercase tracking-wider text-brand-400">
           Account
         </p>
-        <h1 className="mt-2 text-3xl font-semibold text-ink">Settings</h1>
-        <p className="mt-2 text-ink-muted">
+        <h1 className="mt-2 text-3xl font-semibold text-white">Settings</h1>
+        <p className="mt-2 text-app-muted">
           Language defaults, account, and billing — more coming soon.
         </p>
 
