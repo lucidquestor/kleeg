@@ -13,13 +13,13 @@ const STORAGE_KEY = "kleeg-chat-panel-width";
 
 interface ProjectWorkspaceProps {
   project: Project;
-  document: ProjectDocument;
+  projectDocument: ProjectDocument;
   messages: ChatMessage[];
 }
 
 export function ProjectWorkspace({
   project,
-  document,
+  projectDocument,
   messages,
 }: ProjectWorkspaceProps) {
   const [chatWidth, setChatWidth] = useState(DEFAULT_CHAT_WIDTH);
@@ -80,7 +80,7 @@ export function ProjectWorkspace({
   const projectContext = [
     project.name,
     project.description,
-    document.plain_text ? `Document:\n${document.plain_text}` : "",
+    projectDocument.plain_text ? `Document:\n${projectDocument.plain_text}` : "",
   ]
     .filter(Boolean)
     .join("\n\n");
@@ -89,7 +89,7 @@ export function ProjectWorkspace({
     <div className="flex h-screen flex-col overflow-hidden lg:flex-row">
       {/* Editor — scrolls inside panel only */}
       <div className="min-h-0 min-w-0 flex-1 overflow-hidden p-4 lg:p-5">
-        <DocumentEditor projectId={project.id} document={document} />
+        <DocumentEditor projectId={project.id} document={projectDocument} />
       </div>
 
       {/* Mobile stack divider */}

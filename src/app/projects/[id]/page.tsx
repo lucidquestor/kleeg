@@ -62,7 +62,7 @@ export default async function ProjectPage({
     <AppShell activeProjectId={id}>
       <ProjectWorkspace
         project={project as Project}
-        document={document as ProjectDocument}
+        projectDocument={document as ProjectDocument}
         messages={(messages ?? []) as ChatMessage[]}
       />
     </AppShell>
