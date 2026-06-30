@@ -67,15 +67,13 @@ export function ProjectContextPanel({
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex w-full items-center justify-between px-5 py-2.5 text-left lg:px-8"
+        className="flex w-full items-center justify-between px-5 py-2 text-left lg:px-8"
       >
-        <span className="flex items-center gap-2 text-xs font-medium text-zinc-400">
-          <ActionIcon name="context" className="h-3.5 w-3.5" />
-          Project context
+        <span className="flex items-center gap-2 text-xs text-zinc-500">
+          <ActionIcon name="context" className="h-3 w-3" />
+          Context
           {contextText.trim() ? (
-            <span className="rounded bg-brand-500/15 px-1.5 py-0.5 text-[10px] text-brand-300">
-              Active
-            </span>
+            <span className="h-1.5 w-1.5 rounded-full bg-brand-400" />
           ) : null}
         </span>
         <ActionIcon

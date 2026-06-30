@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { ChatComposer, InsertMenu } from "@/components/workspace/ChatComposer";
 import { CustomSelect } from "@/components/ui/CustomSelect";
 import { useWorkspace } from "@/components/workspace/WorkspaceContext";
 import type { ChatMessage, ModelMode } from "@/lib/types";
@@ -38,31 +39,13 @@ export function ProjectChat({
   const [mode, setMode] = useState<ModelMode>("auto");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [insertStatus, setInsertStatus] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
 
-  function handleInsert(content: string, insertMode: "cursor" | "append" | "replace-selection") {
-    const ok = insertText(content, insertMode);
-    if (ok) {
-      setInsertStatus(
-        insertMode === "replace-selection"
-          ? "Replaced selection"
-          : insertMode === "append"
-            ? "Appended to document"
-            : "Inserted at cursor",
-      );
-      setTimeout(() => setInsertStatus(null), 2000);
-    } else {
-      setError("Could not insert — editor not ready.");
-    }
-  }
-
-  async function handleSubmit(event: React.FormEvent) {
-    event.preventDefault();
+  async function handleSubmit() {
     const trimmed = input.trim();
     if (!trimmed || loading) return;
 
@@ -103,11 +86,8 @@ export function ProjectChat({
 
   return (
     <div className="workspace-panel flex h-full min-h-0 flex-col">
-      <div className="flex shrink-0 items-center justify-between border-b border-white/10 px-4 py-4 lg:px-5">
-        <div>
-          <h2 className="text-sm font-semibold text-white">Assistant</h2>
-          <p className="text-xs text-zinc-500">Knows your project context</p>
-        </div>
+      <div className="flex shrink-0 items-center justify-between border-b border-white/10 px-4 py-2.5 lg:px-5">
+        <h2 className="text-sm font-medium text-zinc-200">Assistant</h2>
         <CustomSelect
           value={mode}
           onChange={setMode}
@@ -130,14 +110,11 @@ export function ProjectChat({
         />
       </div>
 
-      <div className="scroll-subtle flex-1 space-y-3 overflow-y-auto px-4 py-4 lg:px-5">
-        {messages.length === 0 ? (
-          <div className="px-2 py-16 text-center">
-            <p className="text-sm font-medium text-zinc-300">Ask Kleeg anything</p>
-            <p className="mt-1.5 text-xs leading-relaxed text-zinc-500">
-              Plan, draft, translate, or summarize work for this project.
-            </p>
-          </div>
+      <div className="scroll-subtle flex-1 space-y-3 overflow-y-auto px-4 py-3 lg:px-5">
+        {messages.length === 0 && !loading ? (
+          <p className="py-12 text-center text-xs text-zinc-600">
+            Ask anything about this project.
+          </p>
         ) : null}
 
         {messages.map((message, index) => (
@@ -148,70 +125,33 @@ export function ProjectChat({
               )}
             >
               <p className="whitespace-pre-wrap">{message.content}</p>
-              {message.model ? (
-                <p className="mt-2 text-[10px] uppercase tracking-wide opacity-60">
-                  {message.model}
-                </p>
-              ) : null}
             </div>
             {message.role === "assistant" ? (
-              <div className="mt-1.5 flex flex-wrap gap-1.5">
-                <button
-                  type="button"
-                  onClick={() => handleInsert(message.content, "cursor")}
-                  className="rounded-md border border-white/10 px-2 py-1 text-[10px] font-medium text-zinc-400 transition hover:bg-white/[0.06] hover:text-zinc-200"
-                >
-                  Insert at cursor
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleInsert(message.content, "append")}
-                  className="rounded-md border border-white/10 px-2 py-1 text-[10px] font-medium text-zinc-400 transition hover:bg-white/[0.06] hover:text-zinc-200"
-                >
-                  Append to doc
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleInsert(message.content, "replace-selection")}
-                  className="rounded-md border border-white/10 px-2 py-1 text-[10px] font-medium text-zinc-400 transition hover:bg-white/[0.06] hover:text-zinc-200"
-                >
-                  Replace selection
-                </button>
-              </div>
+              <InsertMenu onInsert={(mode) => insertText(message.content, mode)} />
             ) : null}
           </div>
         ))}
 
         {loading ? (
-          <div className="chat-bubble-assistant animate-pulse text-zinc-500">
-            Kleeg is thinking…
+          <div className="chat-bubble-assistant animate-pulse text-xs text-zinc-500">
+            Thinking…
           </div>
         ) : null}
 
         <div ref={bottomRef} />
       </div>
 
-      <form onSubmit={handleSubmit} className="shrink-0 border-t border-white/10 px-4 py-4 lg:px-5">
+      <div className="shrink-0 border-t border-white/10 px-4 py-3 lg:px-5">
         {error ? (
-          <p className="mb-3 rounded-md bg-red-500/10 px-3 py-2 text-xs text-red-300">{error}</p>
+          <p className="mb-2 text-[11px] text-red-400">{error}</p>
         ) : null}
-        {insertStatus ? (
-          <p className="mb-3 text-xs font-medium text-brand-300">{insertStatus}</p>
-        ) : null}
-        <div className="flex gap-2">
-          <textarea
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            rows={2}
-            className="input-app min-h-[52px] flex-1 resize-none"
-            placeholder="Ask Kleeg anything about this project…"
-            dir="auto"
-          />
-          <button type="submit" disabled={loading || !input.trim()} className="btn-primary px-4">
-            Send
-          </button>
-        </div>
-      </form>
+        <ChatComposer
+          value={input}
+          onChange={setInput}
+          onSubmit={() => void handleSubmit()}
+          loading={loading}
+        />
+      </div>
     </div>
   );
 }

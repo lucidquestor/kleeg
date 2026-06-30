@@ -4,12 +4,15 @@ import Placeholder from "@tiptap/extension-placeholder";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ActionIcon } from "@/components/ui/icons";
+import {
+  EditorActionsMenu,
+  EditorExportMenu,
+} from "@/components/workspace/EditorMenus";
 import {
   type InsertMode,
   useWorkspace,
 } from "@/components/workspace/WorkspaceContext";
-import { ACTION_GROUPS, type ActionId } from "@/lib/editor-actions";
+import { type ActionId } from "@/lib/editor-actions";
 import {
   copyTextToClipboard,
   downloadDocxFile,
@@ -19,7 +22,6 @@ import {
 import { aiTextToHtml } from "@/lib/format";
 import { detectTextDirection, guessLanguageFromAction } from "@/lib/language";
 import type { ProjectDocument } from "@/lib/types";
-import { cn } from "@/lib/cn";
 
 interface PendingCorrection {
   action: ActionId;
@@ -103,8 +105,8 @@ export function DocumentEditor({ projectId, document }: DocumentEditorProps) {
         if (response.ok) {
           loggedCorrectionKeys.current.add(key);
           pendingCorrection.current = null;
-          setStatus("Saved · correction logged for training");
-          setTimeout(() => setStatus(null), 3000);
+          setStatus("Saved");
+          setTimeout(() => setStatus(null), 2000);
         }
       } catch {
         // Non-blocking
@@ -141,11 +143,6 @@ export function DocumentEditor({ projectId, document }: DocumentEditorProps) {
       }
 
       await logCorrectionIfNeeded(plainText);
-
-      if (pendingCorrection.current) {
-        setStatus("Saved");
-        setTimeout(() => setStatus(null), 2000);
-      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not save document.");
     } finally {
@@ -171,7 +168,7 @@ export function DocumentEditor({ projectId, document }: DocumentEditorProps) {
 
       editor.view.dom.setAttribute("dir", dir);
       void saveDocument();
-      setStatus("Inserted from assistant");
+      setStatus("Inserted");
       setTimeout(() => setStatus(null), 2000);
     },
     [editor, saveDocument],
@@ -219,7 +216,7 @@ export function DocumentEditor({ projectId, document }: DocumentEditorProps) {
     const selectionActive = Boolean(selectedText);
 
     if (!text) {
-      setError("Add some text before running an AI action.");
+      setError("Add some text first.");
       return;
     }
 
@@ -270,10 +267,10 @@ export function DocumentEditor({ projectId, document }: DocumentEditorProps) {
     if (!editor) return;
     try {
       await copyTextToClipboard(editor.getText());
-      setStatus("Copied to clipboard");
+      setStatus("Copied");
       setTimeout(() => setStatus(null), 2000);
     } catch {
-      setError("Could not copy to clipboard.");
+      setError("Copy failed.");
     }
   }
 
@@ -287,89 +284,41 @@ export function DocumentEditor({ projectId, document }: DocumentEditorProps) {
     try {
       await downloadDocxFile(editor.getText(), sanitizeFilename(title));
     } catch {
-      setError("Could not export document.");
+      setError("Export failed.");
     }
   }
 
+  const statusLine = error ?? status ?? (saving ? "Saving…" : null);
+
   return (
     <div className="workspace-panel flex h-full min-h-0 flex-col">
-      <div className="shrink-0 border-b border-white/10 px-5 py-4 lg:px-8">
-        <div className="flex items-start gap-3">
+      <div className="shrink-0 border-b border-white/10 px-5 py-2.5 lg:px-8">
+        <div className="flex items-center gap-2">
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             onBlur={() => void saveDocument()}
-            className="min-w-0 flex-1 bg-transparent text-base font-semibold text-white outline-none placeholder:text-zinc-500"
-            placeholder="Document title"
+            className="min-w-0 flex-1 bg-transparent text-sm font-medium text-white outline-none placeholder:text-zinc-600"
+            placeholder="Untitled"
           />
-          <div className="flex shrink-0 items-center gap-1">
-            <button
-              type="button"
-              onClick={() => void handleCopy()}
-              className="action-chip py-1"
-              title="Copy all text"
-            >
-              <ActionIcon name="copy" />
-              Copy
-            </button>
-            <button
-              type="button"
-              onClick={handleDownloadTxt}
-              className="action-chip py-1"
-              title="Download as .txt"
-            >
-              <ActionIcon name="download" />
-              .txt
-            </button>
-            <button
-              type="button"
-              onClick={() => void handleDownloadDocx()}
-              className="action-chip py-1"
-              title="Download as .docx"
-            >
-              <ActionIcon name="download" />
-              .docx
-            </button>
-          </div>
+          <EditorActionsMenu
+            rewriting={rewriting}
+            hasSelection={hasSelection}
+            onAction={runAction}
+          />
+          <EditorExportMenu
+            onCopy={() => void handleCopy()}
+            onDownloadTxt={handleDownloadTxt}
+            onDownloadDocx={() => void handleDownloadDocx()}
+          />
         </div>
-
-        <div className="mt-4 space-y-3">
-          {ACTION_GROUPS.map((group) => (
-            <div key={group.label}>
-              <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-zinc-500">
-                {group.label}
-              </p>
-              <div className="flex flex-wrap gap-1.5">
-                {group.actions.map((action) => (
-                  <button
-                    key={action.id}
-                    type="button"
-                    disabled={Boolean(rewriting)}
-                    onClick={() => runAction(action.id)}
-                    className={cn(
-                      "action-chip",
-                      rewriting === action.id && "action-chip-active",
-                    )}
-                  >
-                    <ActionIcon name={action.icon} />
-                    {rewriting === action.id ? "Working…" : action.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-zinc-500">
-          {hasSelection ? (
-            <span className="text-brand-300">Actions apply to selected text</span>
-          ) : (
-            <span>Tip: highlight text to rewrite only that part</span>
-          )}
-          {saving ? <span className="text-brand-400">Saving…</span> : null}
-          {status ? <span className="font-medium text-brand-300">{status}</span> : null}
-          {error ? <span className="text-red-400">{error}</span> : null}
-        </div>
+        {statusLine ? (
+          <p
+            className={`mt-1.5 text-[11px] ${error ? "text-red-400" : "text-zinc-500"}`}
+          >
+            {statusLine}
+          </p>
+        ) : null}
       </div>
 
       <div className="scroll-subtle flex-1 overflow-y-auto">
