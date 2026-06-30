@@ -57,24 +57,28 @@ export function DeleteProjectButton({
           e.preventDefault();
           e.stopPropagation();
           const ok = window.confirm(
-            `Delete "${projectName}"? This cannot be undone.`,
+            `Remove "${projectName}"? This cannot be undone.`,
           );
           if (ok) await handleDelete();
         }}
         className={cn(
           variant === "card"
-            ? "rounded-lg p-1.5 text-zinc-500 opacity-0 transition group-hover:opacity-100 hover:bg-red-500/15 hover:text-red-400"
+            ? "flex h-7 w-7 items-center justify-center rounded-full text-zinc-500 opacity-0 transition group-hover:opacity-100 hover:bg-white/10 hover:text-zinc-300"
             : cn(
-                "mr-1.5 shrink-0 rounded-md p-1.5 transition",
+                "mr-1 flex h-4 w-4 shrink-0 items-center justify-center rounded-full transition",
                 active
-                  ? "text-white/80 opacity-100 hover:bg-white/15 hover:text-white"
-                  : "text-sidebar-muted opacity-0 hover:bg-red-500/20 hover:text-red-300 group-hover:opacity-100",
+                  ? "text-white/70 opacity-100 hover:bg-white/15 hover:text-white"
+                  : "text-sidebar-muted opacity-0 hover:bg-white/10 hover:text-zinc-300 group-hover:opacity-70",
               ),
           className,
         )}
-        aria-label={`Delete ${projectName}`}
+        aria-label={`Remove ${projectName}`}
       >
-        <ActionIcon name="trash" className="h-3.5 w-3.5" />
+        <ActionIcon
+          name="close"
+          className={variant === "card" ? "h-3 w-3" : "h-2.5 w-2.5"}
+          strokeWidth={2}
+        />
       </button>
     );
   }
