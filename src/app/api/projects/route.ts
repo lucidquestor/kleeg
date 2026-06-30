@@ -68,7 +68,7 @@ export async function POST(request: Request) {
       );
     }
 
-    if (template.initialText || template.documentTitle !== "Main document") {
+    if (template.initialText || template.documentTitle !== "Untitled") {
       await supabase
         .from("project_documents")
         .update({

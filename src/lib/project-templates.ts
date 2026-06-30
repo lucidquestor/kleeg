@@ -11,7 +11,7 @@ export const PROJECT_TEMPLATES: ProjectTemplate[] = [
     id: "blank",
     name: "Blank",
     description: "Start from scratch",
-    documentTitle: "Main document",
+    documentTitle: "Untitled",
     initialText: "",
   },
   {

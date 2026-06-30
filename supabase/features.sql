@@ -21,3 +21,8 @@ grant select, insert, update, delete on public.user_preferences to authenticated
 -- Project background context (briefs, pasted notes, uploaded text)
 alter table public.projects
   add column if not exists context_text text not null default '';
+
+-- Rename legacy default document title (optional, safe to re-run)
+update public.project_documents
+set title = 'Untitled'
+where title = 'Main document';

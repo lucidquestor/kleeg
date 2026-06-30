@@ -33,6 +33,7 @@ export function ProjectWorkspace({
   );
   const [contextText, setContextText] = useState(initialContextText);
   const [creatingDoc, setCreatingDoc] = useState(false);
+  const [deletingDocId, setDeletingDocId] = useState<string | null>(null);
   const [chatWidth, setChatWidth] = useState(DEFAULT_CHAT_WIDTH);
   const [isResizing, setIsResizing] = useState(false);
   const startX = useRef(0);
@@ -90,6 +91,36 @@ export function ProjectWorkspace({
     setIsResizing(true);
   }
 
+  async function handleDeleteDocument(documentId: string) {
+    setDeletingDocId(documentId);
+    try {
+      const response = await fetch(
+        `/api/projects/${project.id}/documents/${documentId}`,
+        { method: "DELETE" },
+      );
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error ?? "Could not delete document.");
+
+      setDocuments((current) => {
+        const next = current.filter((d) => d.id !== documentId);
+        if (activeDocumentId === documentId && next[0]) {
+          setActiveDocumentId(next[0].id);
+        }
+        return next;
+      });
+    } catch {
+      // user can retry
+    } finally {
+      setDeletingDocId(null);
+    }
+  }
+
+  function handleDocumentTitleChange(documentId: string, title: string) {
+    setDocuments((current) =>
+      current.map((d) => (d.id === documentId ? { ...d, title } : d)),
+    );
+  }
+
   async function handleCreateDocument() {
     setCreatingDoc(true);
     try {
@@ -131,7 +162,9 @@ export function ProjectWorkspace({
             activeDocumentId={activeDocument.id}
             onSelect={setActiveDocumentId}
             onCreate={() => void handleCreateDocument()}
+            onDelete={(id) => void handleDeleteDocument(id)}
             creating={creatingDoc}
+            deletingId={deletingDocId}
           />
           <ProjectContextPanel
             projectId={project.id}
@@ -143,6 +176,9 @@ export function ProjectWorkspace({
               key={activeDocument.id}
               projectId={project.id}
               document={activeDocument}
+              onTitleChange={(title) =>
+                handleDocumentTitleChange(activeDocument.id, title)
+              }
             />
           </div>
         </div>

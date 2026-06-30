@@ -140,7 +140,7 @@ create or replace function public.create_default_document()
 returns trigger as $$
 begin
   insert into public.project_documents (project_id, title, content, plain_text)
-  values (new.id, 'Main document', '{}'::jsonb, '');
+  values (new.id, 'Untitled', '{}'::jsonb, '');
   return new;
 end;
 $$ language plpgsql security definer;
