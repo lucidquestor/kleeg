@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { DeleteProjectButton } from "@/components/projects/DeleteProjectButton";
+import { SidebarProfileMenu } from "@/components/layout/SidebarProfileMenu";
 import { ActionIcon, KleegLogo } from "@/components/ui/icons";
 import type { Project } from "@/lib/types";
 import { cn } from "@/lib/cn";
@@ -13,6 +14,7 @@ interface AppSidebarProps {
   activeProjectId?: string;
   search: string;
   onSearchChange: (value: string) => void;
+  userEmail: string;
 }
 
 export function AppSidebar({
@@ -21,6 +23,7 @@ export function AppSidebar({
   activeProjectId,
   search,
   onSearchChange,
+  userEmail,
 }: AppSidebarProps) {
   const pathname = usePathname();
   const onDashboard = pathname === "/dashboard";
@@ -119,6 +122,8 @@ export function AppSidebar({
           </div>
         ) : null}
       </div>
+
+      <SidebarProfileMenu userEmail={userEmail} />
     </aside>
   );
 }

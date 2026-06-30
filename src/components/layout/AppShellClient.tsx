@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import { AppSidebar } from "@/components/layout/AppSidebar";
-import { AppTopBar } from "@/components/layout/AppTopBar";
 import type { Project } from "@/lib/types";
 
 interface AppShellClientProps {
@@ -39,12 +38,10 @@ export function AppShellClient({
         activeProjectId={activeProjectId}
         search={search}
         onSearchChange={setSearch}
+        userEmail={userEmail}
       />
 
-      <div className="workspace-main flex min-h-screen flex-col lg:pl-64">
-        <AppTopBar userEmail={userEmail} />
-        <div className="flex-1">{children}</div>
-      </div>
+      <div className="workspace-main min-h-screen lg:pl-64">{children}</div>
     </div>
   );
 }
