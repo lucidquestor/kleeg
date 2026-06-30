@@ -40,13 +40,11 @@ export default async function ProjectPage({
     notFound();
   }
 
-  const { data: document } = await supabase
+  const { data: documents } = await supabase
     .from("project_documents")
     .select("*")
     .eq("project_id", id)
-    .order("created_at", { ascending: true })
-    .limit(1)
-    .single();
+    .order("created_at", { ascending: true });
 
   const { data: messages } = await supabase
     .from("chat_messages")
@@ -54,15 +52,18 @@ export default async function ProjectPage({
     .eq("project_id", id)
     .order("created_at", { ascending: true });
 
-  if (!document) {
+  if (!documents || documents.length === 0) {
     notFound();
   }
+
+  const projectRow = project as Project & { context_text?: string | null };
 
   return (
     <AppShell activeProjectId={id}>
       <ProjectWorkspace
-        project={project as Project}
-        projectDocument={document as ProjectDocument}
+        project={projectRow as Project}
+        initialDocuments={documents as ProjectDocument[]}
+        initialContextText={projectRow.context_text ?? ""}
         messages={(messages ?? []) as ChatMessage[]}
       />
     </AppShell>

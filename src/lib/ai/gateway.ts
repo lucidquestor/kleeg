@@ -1,5 +1,10 @@
 import type { ModelMode } from "@/lib/types";
 import { getLanguageGuideForAction, isTranslationAction } from "@/lib/ai/language-guides";
+import {
+  buildPreferencesSystemPrompt,
+  yiddishScriptInstruction,
+  type UserPreferences,
+} from "@/lib/preferences";
 
 export interface GatewayMessage {
   role: "user" | "assistant" | "system";
@@ -11,6 +16,7 @@ export interface ChatRequest {
   mode: ModelMode;
   projectContext?: string;
   temperature?: number;
+  preferences?: UserPreferences;
 }
 
 export interface ChatResponse {
@@ -43,10 +49,20 @@ export function resolveModel(mode: ModelMode): string {
   return MODE_TO_MODEL[mode] ?? MODE_TO_MODEL.auto;
 }
 
-export function buildSystemMessages(projectContext?: string): GatewayMessage[] {
+export function buildSystemMessages(
+  projectContext?: string,
+  preferences?: UserPreferences,
+): GatewayMessage[] {
   const messages: GatewayMessage[] = [
     { role: "system", content: SYSTEM_PROMPT },
   ];
+
+  if (preferences) {
+    messages.push({
+      role: "system",
+      content: buildPreferencesSystemPrompt(preferences),
+    });
+  }
 
   if (projectContext?.trim()) {
     messages.push({
@@ -72,7 +88,7 @@ export async function routeChat(request: ChatRequest): Promise<ChatResponse> {
   const completion = await openai.chat.completions.create({
     model,
     messages: [
-      ...buildSystemMessages(request.projectContext),
+      ...buildSystemMessages(request.projectContext, request.preferences),
       ...request.messages.filter((m) => m.role !== "system"),
     ],
     temperature:
@@ -98,12 +114,26 @@ export async function rewriteText(
   actionPrompt: string,
   mode: ModelMode = "writing",
   actionId?: string,
+  preferences?: UserPreferences,
 ): Promise<string> {
   const languageGuide = actionId ? getLanguageGuideForAction(actionId) : undefined;
   const messages: GatewayMessage[] = [];
 
+  if (preferences) {
+    messages.push({
+      role: "system",
+      content: buildPreferencesSystemPrompt(preferences),
+    });
+  }
+
   if (languageGuide) {
     messages.push({ role: "system", content: languageGuide });
+    if (actionId === "translate_yi" && preferences) {
+      const scriptNote = yiddishScriptInstruction(preferences);
+      if (scriptNote) {
+        messages.push({ role: "system", content: scriptNote });
+      }
+    }
   }
 
   messages.push({

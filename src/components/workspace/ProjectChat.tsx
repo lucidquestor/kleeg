@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { CustomSelect } from "@/components/ui/CustomSelect";
+import { useWorkspace } from "@/components/workspace/WorkspaceContext";
 import type { ChatMessage, ModelMode } from "@/lib/types";
 import { MODEL_MODE_LABELS, MODEL_MODE_SHORT_LABELS } from "@/lib/types";
 import { cn } from "@/lib/cn";
@@ -23,6 +24,7 @@ export function ProjectChat({
   initialMessages,
   projectContext = "",
 }: ProjectChatProps) {
+  const { insertText } = useWorkspace();
   const [messages, setMessages] = useState<UiMessage[]>(
     initialMessages
       .filter((m) => m.role === "user" || m.role === "assistant")
@@ -36,11 +38,28 @@ export function ProjectChat({
   const [mode, setMode] = useState<ModelMode>("auto");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [insertStatus, setInsertStatus] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
+
+  function handleInsert(content: string, insertMode: "cursor" | "append" | "replace-selection") {
+    const ok = insertText(content, insertMode);
+    if (ok) {
+      setInsertStatus(
+        insertMode === "replace-selection"
+          ? "Replaced selection"
+          : insertMode === "append"
+            ? "Appended to document"
+            : "Inserted at cursor",
+      );
+      setTimeout(() => setInsertStatus(null), 2000);
+    } else {
+      setError("Could not insert — editor not ready.");
+    }
+  }
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -122,17 +141,43 @@ export function ProjectChat({
         ) : null}
 
         {messages.map((message, index) => (
-          <div
-            key={`${message.role}-${index}`}
-            className={cn(
-              message.role === "user" ? "chat-bubble-user" : "chat-bubble-assistant",
-            )}
-          >
-            <p className="whitespace-pre-wrap">{message.content}</p>
-            {message.model ? (
-              <p className="mt-2 text-[10px] uppercase tracking-wide opacity-60">
-                {message.model}
-              </p>
+          <div key={`${message.role}-${index}`}>
+            <div
+              className={cn(
+                message.role === "user" ? "chat-bubble-user" : "chat-bubble-assistant",
+              )}
+            >
+              <p className="whitespace-pre-wrap">{message.content}</p>
+              {message.model ? (
+                <p className="mt-2 text-[10px] uppercase tracking-wide opacity-60">
+                  {message.model}
+                </p>
+              ) : null}
+            </div>
+            {message.role === "assistant" ? (
+              <div className="mt-1.5 flex flex-wrap gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => handleInsert(message.content, "cursor")}
+                  className="rounded-md border border-white/10 px-2 py-1 text-[10px] font-medium text-zinc-400 transition hover:bg-white/[0.06] hover:text-zinc-200"
+                >
+                  Insert at cursor
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleInsert(message.content, "append")}
+                  className="rounded-md border border-white/10 px-2 py-1 text-[10px] font-medium text-zinc-400 transition hover:bg-white/[0.06] hover:text-zinc-200"
+                >
+                  Append to doc
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleInsert(message.content, "replace-selection")}
+                  className="rounded-md border border-white/10 px-2 py-1 text-[10px] font-medium text-zinc-400 transition hover:bg-white/[0.06] hover:text-zinc-200"
+                >
+                  Replace selection
+                </button>
+              </div>
             ) : null}
           </div>
         ))}
@@ -149,6 +194,9 @@ export function ProjectChat({
       <form onSubmit={handleSubmit} className="shrink-0 border-t border-white/10 px-4 py-4 lg:px-5">
         {error ? (
           <p className="mb-3 rounded-md bg-red-500/10 px-3 py-2 text-xs text-red-300">{error}</p>
+        ) : null}
+        {insertStatus ? (
+          <p className="mb-3 text-xs font-medium text-brand-300">{insertStatus}</p>
         ) : null}
         <div className="flex gap-2">
           <textarea

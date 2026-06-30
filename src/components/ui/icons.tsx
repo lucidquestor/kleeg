@@ -109,6 +109,9 @@ const paths: Record<string, string> = {
   logout: "M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9",
   plus: "M12 5v14M5 12h14",
   close: "M6 6l12 12M18 6L6 18",
+  copy: "M9 15H5a2 2 0 01-2-2V5a2 2 0 012-2h2M15 11V7a2 2 0 00-2-2h-2M17 17H9a2 2 0 01-2-2v-2",
+  download: "M12 3v12M7 11l5 5 5-5M5 21h14",
+  context: "M4 6h16v12H4V6zm2 2v2h12V8H6zm0 4v4h12v-4H6z",
 };
 
 export function ActionIcon({

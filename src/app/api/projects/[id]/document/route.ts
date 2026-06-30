@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
+/** @deprecated Use PATCH /api/projects/[id]/documents/[docId] instead */
 export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ id: string }> },
@@ -8,6 +9,7 @@ export async function PATCH(
   try {
     const { id } = await params;
     const body = await request.json();
+    const documentId = body.documentId as string | undefined;
     const title = body.title as string | undefined;
     const content = body.content as Record<string, unknown> | undefined;
     const plainText = body.plainText as string | undefined;
@@ -37,12 +39,13 @@ export async function PATCH(
     if (content !== undefined) updates.content = content;
     if (plainText !== undefined) updates.plain_text = plainText;
 
-    const { data: document, error } = await supabase
-      .from("project_documents")
-      .update(updates)
-      .eq("project_id", id)
-      .select("*")
-      .single();
+    let query = supabase.from("project_documents").update(updates).eq("project_id", id);
+
+    if (documentId) {
+      query = query.eq("id", documentId);
+    }
+
+    const { data: document, error } = await query.select("*").single();
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });

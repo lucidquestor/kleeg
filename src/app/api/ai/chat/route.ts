@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { routeChat, type GatewayMessage } from "@/lib/ai/gateway";
+import { getUserPreferences } from "@/lib/user-preferences-server";
 import { createClient } from "@/lib/supabase/server";
 import type { ModelMode } from "@/lib/types";
 
@@ -38,6 +39,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Project not found." }, { status: 404 });
     }
 
+    const preferences = await getUserPreferences(supabase, user.id);
+
     const lastUserMessage = [...messages].reverse().find((m) => m.role === "user");
 
     if (lastUserMessage) {
@@ -48,7 +51,12 @@ export async function POST(request: Request) {
       });
     }
 
-    const result = await routeChat({ messages, mode, projectContext });
+    const result = await routeChat({
+      messages,
+      mode,
+      projectContext,
+      preferences,
+    });
 
     await supabase.from("chat_messages").insert({
       project_id: projectId,

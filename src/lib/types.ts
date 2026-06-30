@@ -15,8 +15,22 @@ export interface Project {
   user_id: string;
   name: string;
   description: string | null;
+  context_text?: string | null;
   created_at: string;
   updated_at: string;
+}
+
+export interface AiCorrection {
+  id: string;
+  user_id: string;
+  project_id: string;
+  document_id: string | null;
+  action: string;
+  source_text: string;
+  ai_output: string;
+  corrected_text: string;
+  language: string | null;
+  created_at: string;
 }
 
 export interface ProjectDocument {

@@ -3,13 +3,15 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ActionIcon } from "@/components/ui/icons";
-import { createClient } from "@/lib/supabase/client";
+import { PROJECT_TEMPLATES } from "@/lib/project-templates";
+import { cn } from "@/lib/cn";
 
 export function NewProjectButton() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [templateId, setTemplateId] = useState("blank");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -39,38 +41,34 @@ export function NewProjectButton() {
     setLoading(true);
     setError(null);
 
-    const supabase = createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    try {
+      const response = await fetch("/api/projects", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: name.trim(),
+          description: description.trim() || null,
+          templateId,
+        }),
+      });
 
-    if (!user) {
-      setError("You must be signed in.");
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error ?? "Could not create project.");
+      }
+
+      setOpen(false);
+      setName("");
+      setDescription("");
+      setTemplateId("blank");
+      router.push(`/projects/${data.id}`);
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not create project.");
+    } finally {
       setLoading(false);
-      return;
     }
-
-    const { data, error: insertError } = await supabase
-      .from("projects")
-      .insert({
-        name: name.trim(),
-        description: description.trim() || null,
-        user_id: user.id,
-      })
-      .select("id")
-      .single();
-
-    if (insertError || !data) {
-      setError(insertError?.message ?? "Could not create project.");
-      setLoading(false);
-      return;
-    }
-
-    setOpen(false);
-    setName("");
-    setDescription("");
-    router.push(`/projects/${data.id}`);
-    router.refresh();
   }
 
   return (
@@ -88,7 +86,7 @@ export function NewProjectButton() {
           <form
             onSubmit={handleSubmit}
             onClick={(e) => e.stopPropagation()}
-            className="card-app w-full max-w-md p-6 shadow-2xl shadow-black/50"
+            className="card-app max-h-[90vh] w-full max-w-md overflow-y-auto p-6 shadow-2xl shadow-black/50"
           >
             <div className="flex items-start justify-between gap-4">
               <div>
@@ -137,10 +135,37 @@ export function NewProjectButton() {
                   id="project-description"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="input-app min-h-24 resize-y"
+                  className="input-app min-h-20 resize-y"
                   placeholder="What is this project about?"
                 />
               </div>
+
+              <div>
+                <p className="mb-2 text-sm font-medium text-zinc-200">Template</p>
+                <div className="space-y-2">
+                  {PROJECT_TEMPLATES.map((template) => (
+                    <button
+                      key={template.id}
+                      type="button"
+                      onClick={() => setTemplateId(template.id)}
+                      className={cn(
+                        "w-full rounded-md border px-3 py-2.5 text-left transition",
+                        templateId === template.id
+                          ? "border-brand-400/40 bg-brand-500/10"
+                          : "border-white/10 bg-white/[0.03] hover:border-white/20",
+                      )}
+                    >
+                      <span className="block text-sm font-medium text-zinc-200">
+                        {template.name}
+                      </span>
+                      <span className="mt-0.5 block text-xs text-zinc-500">
+                        {template.description}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               {error ? (
                 <p className="rounded-md bg-red-500/10 px-4 py-3 text-sm text-red-300">
                   {error}

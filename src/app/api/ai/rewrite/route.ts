@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { rewriteText } from "@/lib/ai/gateway";
+import { getUserPreferences } from "@/lib/user-preferences-server";
 import { createClient } from "@/lib/supabase/server";
 import type { ModelMode } from "@/lib/types";
 
@@ -75,11 +76,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Project not found." }, { status: 404 });
     }
 
+    const preferences = await getUserPreferences(supabase, user.id);
+
     const mode: ModelMode =
       requestedMode ??
       (action.startsWith("translate_") || action === "email" ? "best" : "writing");
 
-    const content = await rewriteText(text, prompt, mode, action);
+    const content = await rewriteText(text, prompt, mode, action, preferences);
 
     return NextResponse.json({ content });
   } catch (error) {
