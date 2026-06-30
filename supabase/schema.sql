@@ -42,6 +42,23 @@ create table if not exists public.chat_messages (
 create index if not exists chat_messages_project_id_idx
   on public.chat_messages(project_id);
 
+-- AI correction log (training data)
+create table if not exists public.ai_corrections (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  project_id uuid not null references public.projects(id) on delete cascade,
+  document_id uuid references public.project_documents(id) on delete set null,
+  action text not null,
+  source_text text not null,
+  ai_output text not null,
+  corrected_text text not null,
+  language text,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists ai_corrections_user_id_idx on public.ai_corrections(user_id);
+create index if not exists ai_corrections_project_id_idx on public.ai_corrections(project_id);
+
 -- Updated_at trigger
 create or replace function public.set_updated_at()
 returns trigger as $$
@@ -65,6 +82,7 @@ create trigger project_documents_set_updated_at
 alter table public.projects enable row level security;
 alter table public.project_documents enable row level security;
 alter table public.chat_messages enable row level security;
+alter table public.ai_corrections enable row level security;
 
 -- API role grants (required when "Automatically expose new tables" is off)
 grant usage on schema public to anon, authenticated;
@@ -72,6 +90,15 @@ grant usage on schema public to anon, authenticated;
 grant select, insert, update, delete on public.projects to authenticated;
 grant select, insert, update, delete on public.project_documents to authenticated;
 grant select, insert, update, delete on public.chat_messages to authenticated;
+grant select, insert on public.ai_corrections to authenticated;
+
+create policy "Users insert own corrections"
+  on public.ai_corrections for insert
+  with check (auth.uid() = user_id);
+
+create policy "Users read own corrections"
+  on public.ai_corrections for select
+  using (auth.uid() = user_id);
 
 create policy "Users manage own projects"
   on public.projects for all

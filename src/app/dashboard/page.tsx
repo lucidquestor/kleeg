@@ -26,13 +26,17 @@ export default async function DashboardPage() {
     .order("updated_at", { ascending: false });
 
   return (
-    <div className="min-h-screen bg-surface">
+    <div className="min-h-screen hero-gradient">
       <AppHeader />
       <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
         <div className="mb-8">
-          <h1 className="text-3xl font-semibold text-ink">Your projects</h1>
-          <p className="mt-2 text-ink-muted">
-            Each project has a document editor and an AI assistant with shared context.
+          <p className="text-xs font-semibold uppercase tracking-wider text-brand-600">
+            Workspace
+          </p>
+          <h1 className="mt-2 text-3xl font-semibold text-ink">Your projects</h1>
+          <p className="mt-2 max-w-xl text-ink-muted">
+            Each project has a document editor, AI assistant, and learns from your
+            corrections.
           </p>
         </div>
 

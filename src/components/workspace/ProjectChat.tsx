@@ -82,16 +82,16 @@ export function ProjectChat({
   }
 
   return (
-    <div className="workspace-panel h-full">
-      <div className="flex items-center justify-between border-b border-border px-4 py-3">
+    <div className="workspace-panel h-full lg:max-h-[calc(100vh-2.5rem)]">
+      <div className="flex items-center justify-between border-b border-border bg-gradient-to-r from-white to-brand-50/40 px-4 py-4">
         <div>
           <h2 className="text-sm font-semibold text-ink">Assistant</h2>
-          <p className="text-xs text-ink-muted">Chat with your project context</p>
+          <p className="text-xs text-ink-muted">Knows your project context</p>
         </div>
         <select
           value={mode}
           onChange={(e) => setMode(e.target.value as ModelMode)}
-          className="rounded-lg border border-border bg-white px-2 py-1.5 text-xs text-ink"
+          className="rounded-lg border border-border bg-white px-2 py-1.5 text-xs text-ink shadow-sm"
         >
           {Object.entries(MODEL_MODE_LABELS).map(([value, label]) => (
             <option key={value} value={value}>
@@ -101,10 +101,13 @@ export function ProjectChat({
         </select>
       </div>
 
-      <div className="flex-1 space-y-4 overflow-y-auto px-4 py-4">
+      <div className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
         {messages.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-border bg-surface px-4 py-8 text-center text-sm text-ink-muted">
-            Ask Kleeg to plan, draft, translate, or summarize work for this project.
+          <div className="rounded-2xl border border-dashed border-brand-200 bg-brand-50/50 px-4 py-10 text-center">
+            <p className="text-sm font-medium text-brand-800">Ask Kleeg anything</p>
+            <p className="mt-1 text-xs text-ink-muted">
+              Plan, draft, translate, or summarize work for this project.
+            </p>
           </div>
         ) : null}
 
@@ -112,15 +115,12 @@ export function ProjectChat({
           <div
             key={`${message.role}-${index}`}
             className={cn(
-              "max-w-[92%] rounded-2xl px-4 py-3 text-sm leading-relaxed",
-              message.role === "user"
-                ? "ml-auto bg-brand-600 text-white"
-                : "bg-surface text-ink",
+              message.role === "user" ? "chat-bubble-user" : "chat-bubble-assistant",
             )}
           >
             <p className="whitespace-pre-wrap">{message.content}</p>
             {message.model ? (
-              <p className="mt-2 text-[10px] uppercase tracking-wide opacity-70">
+              <p className="mt-2 text-[10px] uppercase tracking-wide opacity-60">
                 {message.model}
               </p>
             ) : null}
@@ -128,7 +128,7 @@ export function ProjectChat({
         ))}
 
         {loading ? (
-          <div className="max-w-[92%] rounded-2xl bg-surface px-4 py-3 text-sm text-ink-muted">
+          <div className="chat-bubble-assistant animate-pulse text-ink-muted">
             Kleeg is thinking…
           </div>
         ) : null}
@@ -136,7 +136,7 @@ export function ProjectChat({
         <div ref={bottomRef} />
       </div>
 
-      <form onSubmit={handleSubmit} className="border-t border-border p-4">
+      <form onSubmit={handleSubmit} className="border-t border-border bg-white p-4">
         {error ? (
           <p className="mb-3 rounded-xl bg-red-50 px-3 py-2 text-xs text-red-700">{error}</p>
         ) : null}
@@ -147,6 +147,7 @@ export function ProjectChat({
             rows={2}
             className="input-field min-h-[52px] flex-1 resize-none"
             placeholder="Ask Kleeg anything about this project…"
+            dir="auto"
           />
           <button type="submit" disabled={loading || !input.trim()} className="btn-primary px-4">
             Send

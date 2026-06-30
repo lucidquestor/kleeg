@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { KleegMark } from "@/components/ui/icons";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
@@ -67,10 +68,11 @@ export function AuthForm({ mode, title, subtitle, nextPath }: AuthFormProps) {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-surface px-4 py-12">
-      <div className="card w-full max-w-md p-8">
-        <Link href="/" className="text-lg font-semibold text-ink">
-          Kleeg
+    <div className="flex min-h-screen items-center justify-center hero-gradient px-4 py-12">
+      <div className="card w-full max-w-md p-8 shadow-lg">
+        <Link href="/" className="flex items-center gap-2.5">
+          <KleegMark />
+          <span className="text-lg font-semibold text-ink">Kleeg</span>
         </Link>
         <h1 className="mt-6 text-2xl font-semibold text-ink">{title}</h1>
         <p className="mt-2 text-sm text-ink-muted">{subtitle}</p>

@@ -6,6 +6,7 @@ grant usage on schema public to anon, authenticated;
 grant select, insert, update, delete on public.projects to authenticated;
 grant select, insert, update, delete on public.project_documents to authenticated;
 grant select, insert, update, delete on public.chat_messages to authenticated;
+grant select, insert on public.ai_corrections to authenticated;
 
 -- Ensure RLS policies exist (safe to re-run)
 alter table public.projects enable row level security;

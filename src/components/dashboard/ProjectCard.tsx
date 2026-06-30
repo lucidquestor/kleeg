@@ -9,8 +9,9 @@ export function ProjectCard({ project }: ProjectCardProps) {
   return (
     <Link
       href={`/projects/${project.id}`}
-      className="card block p-6 transition hover:border-brand-300 hover:shadow-md"
+      className="card card-hover group block p-6"
     >
+      <div className="mb-3 h-1 w-8 rounded-full bg-gradient-to-r from-brand-500 to-brand-700 transition group-hover:w-12" />
       <h3 className="text-lg font-semibold text-ink">{project.name}</h3>
       {project.description ? (
         <p className="mt-2 line-clamp-2 text-sm text-ink-muted">{project.description}</p>
