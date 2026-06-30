@@ -2,7 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ChatComposer, InsertMenu } from "@/components/workspace/ChatComposer";
-import { ProjectContextPanel } from "@/components/workspace/ProjectContextPanel";
+import {
+  ContextToggle,
+  ProjectContextPanel,
+} from "@/components/workspace/ProjectContextPanel";
 import { CustomSelect } from "@/components/ui/CustomSelect";
 import { useWorkspace } from "@/components/workspace/WorkspaceContext";
 import type { ChatMessage, ModelMode } from "@/lib/types";
@@ -31,6 +34,7 @@ export function ProjectChat({
   onContextSaved,
 }: ProjectChatProps) {
   const { insertText } = useWorkspace();
+  const [contextOpen, setContextOpen] = useState(false);
   const [messages, setMessages] = useState<UiMessage[]>(
     initialMessages
       .filter((m) => m.role === "user" || m.role === "assistant")
@@ -91,34 +95,42 @@ export function ProjectChat({
 
   return (
     <div className="workspace-panel flex h-full min-h-0 flex-col">
-      <div className="flex shrink-0 items-center justify-between border-b border-white/10 px-4 py-2.5 lg:px-5">
+      <div className="workspace-bar shrink-0 justify-between gap-2 px-4 lg:px-5">
         <h2 className="text-sm font-medium text-zinc-200">Assistant</h2>
-        <CustomSelect
-          value={mode}
-          onChange={setMode}
-          ariaLabel="AI model mode"
-          options={(
-            Object.entries(MODEL_MODE_LABELS) as [ModelMode, string][]
-          ).map(([value, label]) => ({
-            value,
-            label,
-            shortLabel: MODEL_MODE_SHORT_LABELS[value],
-            description:
-              value === "auto"
-                ? "Recommended default"
-                : value === "fast"
-                  ? "Quick responses"
-                  : value === "best"
-                    ? "Deep thinking"
-                    : "Polished prose",
-          }))}
-        />
+        <div className="flex items-center gap-2">
+          <ContextToggle
+            active={contextOpen}
+            hasContent={Boolean(contextText.trim())}
+            onClick={() => setContextOpen((v) => !v)}
+          />
+          <CustomSelect
+            value={mode}
+            onChange={setMode}
+            ariaLabel="AI model mode"
+            options={(
+              Object.entries(MODEL_MODE_LABELS) as [ModelMode, string][]
+            ).map(([value, label]) => ({
+              value,
+              label,
+              shortLabel: MODEL_MODE_SHORT_LABELS[value],
+              description:
+                value === "auto"
+                  ? "Recommended default"
+                  : value === "fast"
+                    ? "Quick responses"
+                    : value === "best"
+                      ? "Deep thinking"
+                      : "Polished prose",
+            }))}
+          />
+        </div>
       </div>
 
       <ProjectContextPanel
         projectId={projectId}
         initialContext={contextText}
         onSaved={onContextSaved}
+        open={contextOpen}
       />
 
       <div className="scroll-subtle flex-1 space-y-3 overflow-y-auto px-4 py-3 lg:px-5">
@@ -152,7 +164,7 @@ export function ProjectChat({
         <div ref={bottomRef} />
       </div>
 
-      <div className="shrink-0 border-t border-white/10 px-4 py-3 lg:px-5">
+      <div className="shrink-0 border-t border-white/[0.06] px-4 py-3 lg:px-5">
         {error ? (
           <p className="mb-2 text-[11px] text-red-400">{error}</p>
         ) : null}

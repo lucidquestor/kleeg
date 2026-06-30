@@ -1,6 +1,7 @@
 "use client";
 
-import { createContext, useCallback, useContext, useMemo, useRef } from "react";
+import { createContext, useCallback, useContext, useMemo, useState } from "react";
+import type { ActionId } from "@/lib/editor-actions";
 
 export type InsertMode = "cursor" | "append" | "replace-selection";
 
@@ -9,29 +10,51 @@ interface EditorBridge {
   getPlainText: () => string;
 }
 
+export interface EditorChrome {
+  rewriting: ActionId | null;
+  hasSelection: boolean;
+  statusLine: string | null;
+  isError: boolean;
+  runAction: (id: ActionId) => void;
+  handleCopy: () => void;
+  handleDownloadTxt: () => void;
+  handleDownloadDocx: () => void;
+}
+
 interface WorkspaceContextValue {
   registerEditor: (bridge: EditorBridge | null) => void;
   insertText: (text: string, mode: InsertMode) => boolean;
+  editorChrome: EditorChrome | null;
+  setEditorChrome: (chrome: EditorChrome | null) => void;
 }
 
 const WorkspaceContext = createContext<WorkspaceContextValue | null>(null);
 
 export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
-  const editorRef = useRef<EditorBridge | null>(null);
+  const [editorBridge, setEditorBridge] = useState<EditorBridge | null>(null);
+  const [editorChrome, setEditorChrome] = useState<EditorChrome | null>(null);
 
   const registerEditor = useCallback((bridge: EditorBridge | null) => {
-    editorRef.current = bridge;
+    setEditorBridge(bridge);
   }, []);
 
-  const insertText = useCallback((text: string, mode: InsertMode) => {
-    if (!editorRef.current) return false;
-    editorRef.current.insertText(text, mode);
-    return true;
-  }, []);
+  const insertText = useCallback(
+    (text: string, mode: InsertMode) => {
+      if (!editorBridge) return false;
+      editorBridge.insertText(text, mode);
+      return true;
+    },
+    [editorBridge],
+  );
 
   const value = useMemo(
-    () => ({ registerEditor, insertText }),
-    [insertText, registerEditor],
+    () => ({
+      registerEditor,
+      insertText,
+      editorChrome,
+      setEditorChrome,
+    }),
+    [editorChrome, insertText, registerEditor],
   );
 
   return (

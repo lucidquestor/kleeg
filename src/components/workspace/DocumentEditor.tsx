@@ -5,10 +5,6 @@ import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
-  EditorActionsMenu,
-  EditorExportMenu,
-} from "@/components/workspace/EditorMenus";
-import {
   type InsertMode,
   useWorkspace,
 } from "@/components/workspace/WorkspaceContext";
@@ -35,7 +31,7 @@ interface DocumentEditorProps {
 }
 
 export function DocumentEditor({ projectId, document }: DocumentEditorProps) {
-  const { registerEditor } = useWorkspace();
+  const { registerEditor, setEditorChrome } = useWorkspace();
   const [title, setTitle] = useState(document.title);
   const [saving, setSaving] = useState(false);
   const [rewriting, setRewriting] = useState<ActionId | null>(null);
@@ -207,63 +203,66 @@ export function DocumentEditor({ projectId, document }: DocumentEditorProps) {
     };
   }, [editor, saveDocument]);
 
-  async function runAction(actionId: ActionId) {
-    if (!editor) return;
+  const runAction = useCallback(
+    async (actionId: ActionId) => {
+      if (!editor) return;
 
-    const { from, to } = editor.state.selection;
-    const selectedText = editor.state.doc.textBetween(from, to, "\n").trim();
-    const text = selectedText || editor.getText().trim();
-    const selectionActive = Boolean(selectedText);
+      const { from, to } = editor.state.selection;
+      const selectedText = editor.state.doc.textBetween(from, to, "\n").trim();
+      const text = selectedText || editor.getText().trim();
+      const selectionActive = Boolean(selectedText);
 
-    if (!text) {
-      setError("Add some text first.");
-      return;
-    }
+      if (!text) {
+        setError("Add some text first.");
+        return;
+      }
 
-    setRewriting(actionId);
-    setError(null);
+      setRewriting(actionId);
+      setError(null);
 
-    try {
-      const response = await fetch("/api/ai/rewrite", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          projectId,
+      try {
+        const response = await fetch("/api/ai/rewrite", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            projectId,
+            action: actionId,
+            text,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error ?? "Rewrite failed.");
+        }
+
+        pendingCorrection.current = {
           action: actionId,
-          text,
-        }),
-      });
+          sourceText: text,
+          aiOutput: data.content,
+        };
 
-      const data = await response.json();
+        const html = aiTextToHtml(data.content);
+        if (selectionActive) {
+          editor.chain().focus().deleteRange({ from, to }).insertContentAt(from, html).run();
+        } else {
+          editor.commands.setContent(html);
+        }
 
-      if (!response.ok) {
-        throw new Error(data.error ?? "Rewrite failed.");
+        const dir = detectTextDirection(data.content);
+        editor.view.dom.setAttribute("dir", dir);
+        await saveDocument();
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Rewrite failed.");
+      } finally {
+        setRewriting(null);
       }
+    },
+    [editor, projectId, saveDocument],
+  );
 
-      pendingCorrection.current = {
-        action: actionId,
-        sourceText: text,
-        aiOutput: data.content,
-      };
-
-      const html = aiTextToHtml(data.content);
-      if (selectionActive) {
-        editor.chain().focus().deleteRange({ from, to }).insertContentAt(from, html).run();
-      } else {
-        editor.commands.setContent(html);
-      }
-
-      const dir = detectTextDirection(data.content);
-      editor.view.dom.setAttribute("dir", dir);
-      await saveDocument();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Rewrite failed.");
-    } finally {
-      setRewriting(null);
-    }
-  }
-
-  async function handleCopy() {
+  const handleCopy = useCallback(async () => {
     if (!editor) return;
     try {
       await copyTextToClipboard(editor.getText());
@@ -272,48 +271,57 @@ export function DocumentEditor({ projectId, document }: DocumentEditorProps) {
     } catch {
       setError("Copy failed.");
     }
-  }
+  }, [editor]);
 
-  function handleDownloadTxt() {
+  const handleDownloadTxt = useCallback(() => {
     if (!editor) return;
     downloadTextFile(editor.getText(), `${sanitizeFilename(title)}.txt`);
-  }
+  }, [editor, title]);
 
-  async function handleDownloadDocx() {
+  const handleDownloadDocx = useCallback(async () => {
     if (!editor) return;
     try {
       await downloadDocxFile(editor.getText(), sanitizeFilename(title));
     } catch {
       setError("Export failed.");
     }
-  }
+  }, [editor, title]);
 
   const statusLine = error ?? status ?? (saving ? "Saving…" : null);
 
+  useEffect(() => {
+    if (!editor) {
+      setEditorChrome(null);
+      return;
+    }
+
+    setEditorChrome({
+      rewriting,
+      hasSelection,
+      statusLine,
+      isError: Boolean(error),
+      runAction,
+      handleCopy,
+      handleDownloadTxt,
+      handleDownloadDocx,
+    });
+
+    return () => setEditorChrome(null);
+  }, [
+    editor,
+    error,
+    handleCopy,
+    handleDownloadDocx,
+    handleDownloadTxt,
+    hasSelection,
+    rewriting,
+    runAction,
+    setEditorChrome,
+    statusLine,
+  ]);
+
   return (
     <div className="workspace-panel flex h-full min-h-0 flex-col">
-      <div className="shrink-0 border-b border-white/10 px-5 py-2 lg:px-8">
-        <div className="flex items-center justify-end gap-2">
-          <EditorActionsMenu
-            rewriting={rewriting}
-            hasSelection={hasSelection}
-            onAction={runAction}
-          />
-          <EditorExportMenu
-            onCopy={() => void handleCopy()}
-            onDownloadTxt={handleDownloadTxt}
-            onDownloadDocx={() => void handleDownloadDocx()}
-          />
-        </div>
-        {statusLine ? (
-          <p
-            className={`mt-1.5 text-right text-[11px] ${error ? "text-red-400" : "text-zinc-500"}`}
-          >
-            {statusLine}
-          </p>
-        ) : null}
-      </div>
-
       <div className="scroll-subtle flex-1 overflow-y-auto">
         <EditorContent editor={editor} />
       </div>

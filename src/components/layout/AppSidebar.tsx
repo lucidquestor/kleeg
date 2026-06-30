@@ -30,7 +30,7 @@ export function AppSidebar({
 
   return (
     <aside className="workspace-sidebar">
-      <div className="shrink-0 border-b border-white/10 p-4">
+      <div className="workspace-bar shrink-0 px-4">
         <Link href="/dashboard">
           <KleegLogo wordmarkClassName="text-white" />
         </Link>

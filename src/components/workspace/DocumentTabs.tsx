@@ -14,6 +14,7 @@ interface DocumentTabsProps {
   onRename: (documentId: string, title: string) => void;
   creating?: boolean;
   deletingId?: string | null;
+  embedded?: boolean;
 }
 
 export function DocumentTabs({
@@ -25,6 +26,7 @@ export function DocumentTabs({
   onRename,
   creating,
   deletingId,
+  embedded = false,
 }: DocumentTabsProps) {
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -52,7 +54,12 @@ export function DocumentTabs({
   }
 
   return (
-    <div className="flex items-center gap-1 overflow-x-auto border-b border-white/10 px-5 py-2 lg:px-8">
+    <div
+      className={cn(
+        "flex min-w-0 flex-1 items-center gap-1 overflow-x-auto",
+        !embedded && "workspace-bar border-b border-white/[0.06] px-5 lg:px-8",
+      )}
+    >
       {documents.map((doc) => {
         const active = doc.id === activeDocumentId;
         const confirming = confirmDeleteId === doc.id;
@@ -139,7 +146,7 @@ export function DocumentTabs({
         className="ml-1 flex shrink-0 items-center gap-1 rounded-md px-2 py-1.5 text-xs text-zinc-500 transition hover:bg-white/[0.06] hover:text-zinc-200 disabled:opacity-50"
       >
         <ActionIcon name="plus" className="h-3 w-3" />
-        {creating ? "Adding…" : "New doc"}
+        {creating ? "…" : "New doc"}
       </button>
     </div>
   );

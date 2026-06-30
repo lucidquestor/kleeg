@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { DocumentEditor } from "@/components/workspace/DocumentEditor";
-import { DocumentTabs } from "@/components/workspace/DocumentTabs";
+import { WorkspaceTopBar } from "@/components/workspace/WorkspaceTopBar";
 import { ProjectChat } from "@/components/workspace/ProjectChat";
 import { WorkspaceProvider } from "@/components/workspace/WorkspaceContext";
 import type { ChatMessage, Project, ProjectDocument } from "@/lib/types";
@@ -169,7 +169,7 @@ export function ProjectWorkspace({
     <WorkspaceProvider>
       <div className="flex h-screen flex-col overflow-hidden lg:flex-row">
         <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
-          <DocumentTabs
+          <WorkspaceTopBar
             documents={documents}
             activeDocumentId={activeDocument.id}
             onSelect={setActiveDocumentId}
