@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-50: #eef6ff;
+  --color-brand-100: #d9ebff;
+  --color-brand-200: #bcdbff;
+  --color-brand-300: #8ec4ff;
+  --color-brand-400: #59a3ff;
+  --color-brand-500: #3380ff;
+  --color-brand-600: #1a5ff5;
+  --color-brand-700: #144ae1;
+  --color-brand-800: #173db6;
+  --color-brand-900: #19378f;
+
+  --color-ink: #0f172a;
+  --color-ink-muted: #475569;
+  --color-surface: #f8fafc;
+  --color-border: #e2e8f0;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-white font-sans text-ink antialiased;
+  }
+
+  ::selection {
+    @apply bg-brand-100 text-brand-900;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center rounded-xl border border-border bg-white px-4 py-2.5 text-sm font-medium text-ink transition hover:bg-surface disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .input-field {
+    @apply w-full rounded-xl border border-border bg-white px-4 py-2.5 text-sm text-ink outline-none transition placeholder:text-ink-muted/70 focus:border-brand-400 focus:ring-2 focus:ring-brand-100;
+  }
+
+  .card {
+    @apply rounded-2xl border border-border bg-white shadow-sm;
+  }
+
+  .workspace-panel {
+    @apply flex min-h-0 flex-col rounded-2xl border border-border bg-white shadow-sm;
+  }
+}
+
+.ProseMirror {
+  @apply min-h-[320px] px-4 py-3 text-sm leading-relaxed text-ink outline-none;
+}
+
+.ProseMirror p.is-editor-empty:first-child::before {
+  @apply pointer-events-none float-left h-0 text-ink-muted/60;
+  content: attr(data-placeholder);
+}
