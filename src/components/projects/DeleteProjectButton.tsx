@@ -8,7 +8,8 @@ import { cn } from "@/lib/cn";
 interface DeleteProjectButtonProps {
   projectId: string;
   projectName: string;
-  variant?: "sidebar" | "card";
+  variant?: "sidebar" | "sidebar-tab" | "card";
+  active?: boolean;
   className?: string;
 }
 
@@ -16,6 +17,7 @@ export function DeleteProjectButton({
   projectId,
   projectName,
   variant = "sidebar",
+  active = false,
   className,
 }: DeleteProjectButtonProps) {
   const router = useRouter();
@@ -46,7 +48,7 @@ export function DeleteProjectButton({
     }
   }
 
-  if (variant === "card") {
+  if (variant === "card" || variant === "sidebar-tab") {
     return (
       <button
         type="button"
@@ -60,12 +62,19 @@ export function DeleteProjectButton({
           if (ok) await handleDelete();
         }}
         className={cn(
-          "rounded-lg p-1.5 text-ink-muted opacity-0 transition group-hover:opacity-100 hover:bg-red-50 hover:text-red-600",
+          variant === "card"
+            ? "rounded-lg p-1.5 text-ink-muted opacity-0 transition group-hover:opacity-100 hover:bg-red-50 hover:text-red-600"
+            : cn(
+                "mr-1.5 shrink-0 rounded-md p-1.5 transition",
+                active
+                  ? "text-white/80 opacity-100 hover:bg-white/15 hover:text-white"
+                  : "text-sidebar-muted opacity-0 hover:bg-red-500/20 hover:text-red-300 group-hover:opacity-100",
+              ),
           className,
         )}
         aria-label={`Delete ${projectName}`}
       >
-        <ActionIcon name="trash" className="h-4 w-4" />
+        <ActionIcon name="trash" className="h-3.5 w-3.5" />
       </button>
     );
   }
