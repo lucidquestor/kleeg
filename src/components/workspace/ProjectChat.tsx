@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { CustomSelect } from "@/components/ui/CustomSelect";
 import type { ChatMessage, ModelMode } from "@/lib/types";
-import { MODEL_MODE_LABELS } from "@/lib/types";
+import { MODEL_MODE_LABELS, MODEL_MODE_SHORT_LABELS } from "@/lib/types";
 import { cn } from "@/lib/cn";
 
 interface ProjectChatProps {
@@ -98,9 +98,10 @@ export function ProjectChat({
           ).map(([value, label]) => ({
             value,
             label,
+            shortLabel: MODEL_MODE_SHORT_LABELS[value],
             description:
               value === "auto"
-                ? "Balanced default"
+                ? "Recommended default"
                 : value === "fast"
                   ? "Quick responses"
                   : value === "best"
@@ -112,9 +113,9 @@ export function ProjectChat({
 
       <div className="scroll-subtle flex-1 space-y-3 overflow-y-auto px-4 py-4 lg:px-5">
         {messages.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-brand-400/30 bg-brand-500/10 px-4 py-10 text-center">
-            <p className="text-sm font-medium text-brand-200">Ask Kleeg anything</p>
-            <p className="mt-1 text-xs text-zinc-500">
+          <div className="px-2 py-16 text-center">
+            <p className="text-sm font-medium text-zinc-300">Ask Kleeg anything</p>
+            <p className="mt-1.5 text-xs leading-relaxed text-zinc-500">
               Plan, draft, translate, or summarize work for this project.
             </p>
           </div>
@@ -147,7 +148,7 @@ export function ProjectChat({
 
       <form onSubmit={handleSubmit} className="shrink-0 border-t border-white/10 px-4 py-4 lg:px-5">
         {error ? (
-          <p className="mb-3 rounded-xl bg-red-500/10 px-3 py-2 text-xs text-red-300">{error}</p>
+          <p className="mb-3 rounded-md bg-red-500/10 px-3 py-2 text-xs text-red-300">{error}</p>
         ) : null}
         <div className="flex gap-2">
           <textarea

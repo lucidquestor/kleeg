@@ -30,10 +30,17 @@ export interface ProjectDocument {
 }
 
 export const MODEL_MODE_LABELS: Record<ModelMode, string> = {
-  auto: "Auto — recommended",
+  auto: "Auto",
   fast: "Fast",
   best: "Best reasoning",
   writing: "Best writing",
+};
+
+export const MODEL_MODE_SHORT_LABELS: Record<ModelMode, string> = {
+  auto: "Auto",
+  fast: "Fast",
+  best: "Best",
+  writing: "Writing",
 };
 
 export const siteConfig = {

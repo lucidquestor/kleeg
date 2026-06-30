@@ -51,7 +51,7 @@ export function AppSidebar({
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder="Search projects…"
-            className="w-full rounded-lg border border-white/10 bg-white/5 py-2 pl-8 pr-3 text-xs text-white outline-none placeholder:text-sidebar-muted focus:border-brand-400/50 focus:bg-white/10"
+            className="w-full rounded-md border border-white/10 bg-white/[0.03] py-2 pl-8 pr-3 text-xs text-white outline-none placeholder:text-sidebar-muted focus:border-white/20 focus:bg-white/[0.06]"
           />
         </div>
 
@@ -59,7 +59,7 @@ export function AppSidebar({
           <Link
             href="/dashboard"
             className={cn(
-              "block rounded-lg px-3 py-2 text-sm transition",
+              "block rounded-md px-3 py-2 text-sm transition",
               onDashboard
                 ? "bg-white/10 font-medium text-white"
                 : "text-sidebar-muted hover:bg-white/5 hover:text-white",
@@ -74,9 +74,9 @@ export function AppSidebar({
               <div
                 key={project.id}
                 className={cn(
-                  "group flex items-center gap-0.5 rounded-lg transition",
+                  "group flex items-center gap-0.5 rounded-md transition",
                   active
-                    ? "bg-gradient-to-r from-brand-600/80 to-brand-700/60 shadow-sm"
+                    ? "bg-brand-600/20 ring-1 ring-brand-500/30"
                     : "hover:bg-white/5",
                 )}
               >
@@ -107,7 +107,7 @@ export function AppSidebar({
         </nav>
 
         {!activeProjectId ? (
-          <div className="mt-6 rounded-xl border border-white/10 bg-white/5 p-3">
+          <div className="mt-6 rounded-md border border-white/10 bg-white/[0.03] p-3">
             <p className="text-[10px] font-semibold uppercase tracking-wider text-sidebar-muted">
               Training
             </p>

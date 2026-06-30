@@ -101,7 +101,7 @@ export function NewProjectButton() {
                 type="button"
                 onClick={closeModal}
                 disabled={loading}
-                className="rounded-lg p-1.5 text-zinc-500 transition hover:bg-white/10 hover:text-white"
+                className="rounded-md p-1.5 text-zinc-500 transition hover:bg-white/10 hover:text-white"
                 aria-label="Close"
               >
                 <ActionIcon name="close" className="h-4 w-4" />
@@ -142,7 +142,7 @@ export function NewProjectButton() {
                 />
               </div>
               {error ? (
-                <p className="rounded-xl bg-red-500/10 px-4 py-3 text-sm text-red-300">
+                <p className="rounded-md bg-red-500/10 px-4 py-3 text-sm text-red-300">
                   {error}
                 </p>
               ) : null}
@@ -154,7 +154,7 @@ export function NewProjectButton() {
                   type="button"
                   disabled={loading}
                   onClick={closeModal}
-                  className="rounded-xl border border-white/10 px-4 py-2.5 text-sm font-medium text-zinc-300 transition hover:bg-white/5"
+                  className="rounded-md border border-white/10 px-4 py-2.5 text-sm font-medium text-zinc-300 transition hover:bg-white/5"
                 >
                   Cancel
                 </button>

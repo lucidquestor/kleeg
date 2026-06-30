@@ -7,6 +7,7 @@ import { cn } from "@/lib/cn";
 export interface SelectOption<T extends string = string> {
   value: T;
   label: string;
+  shortLabel?: string;
   description?: string;
 }
 
@@ -50,24 +51,28 @@ export function CustomSelect<T extends string = string>({
         aria-expanded={open}
         onClick={() => setOpen((current) => !current)}
         className={cn(
-          "flex min-w-[148px] items-center justify-between gap-2 rounded-xl border px-3 py-2 text-left text-xs font-medium shadow-sm transition",
+          "flex items-center justify-between gap-2 rounded-md border px-2.5 py-1.5 text-left text-xs font-medium transition",
           isDark
-            ? "border-white/10 bg-white/5 text-zinc-200 hover:border-brand-400/40 hover:bg-brand-500/10"
+            ? "border-white/10 bg-white/[0.03] text-zinc-300 hover:border-white/20 hover:bg-white/[0.06]"
             : "border-border bg-white text-ink hover:border-brand-300 hover:bg-brand-50/40",
         )}
       >
-        <span className="truncate">{selected.label}</span>
+        <span className="truncate">{selected.shortLabel ?? selected.label}</span>
         <ActionIcon
           name="chevron"
-          className={cn(isDark ? "text-zinc-400" : "text-ink-muted", "transition", open && "rotate-180")}
+          className={cn(
+            isDark ? "text-zinc-500" : "text-ink-muted",
+            "shrink-0 transition",
+            open && "rotate-180",
+          )}
         />
       </button>
 
       {open ? (
         <ul
           className={cn(
-            "absolute right-0 z-50 mt-1.5 min-w-full overflow-hidden rounded-xl border py-1 shadow-lg shadow-black/30",
-            isDark ? "border-white/10 bg-[#1f1f25]" : "border-border bg-white shadow-black/10",
+            "absolute right-0 z-50 mt-1 min-w-[168px] overflow-hidden rounded-md border py-1 shadow-lg shadow-black/40",
+            isDark ? "border-white/10 bg-[#1c1c22]" : "border-border bg-white shadow-black/10",
           )}
           role="listbox"
         >
@@ -83,8 +88,8 @@ export function CustomSelect<T extends string = string>({
                   "flex w-full flex-col px-3 py-2 text-left transition",
                   isDark
                     ? cn(
-                        "hover:bg-white/10",
-                        option.value === value && "bg-brand-500/15 text-brand-200",
+                        "hover:bg-white/[0.06]",
+                        option.value === value && "bg-brand-500/10 text-brand-200",
                       )
                     : cn(
                         "hover:bg-brand-50",
