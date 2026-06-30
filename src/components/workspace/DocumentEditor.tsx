@@ -5,6 +5,7 @@ import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { useCallback, useEffect, useState } from "react";
 import type { ProjectDocument } from "@/lib/types";
+import { aiTextToHtml } from "@/lib/format";
 
 const ACTIONS = [
   { id: "improve", label: "Improve writing" },
@@ -126,7 +127,7 @@ export function DocumentEditor({ projectId, document }: DocumentEditorProps) {
         throw new Error(data.error ?? "Rewrite failed.");
       }
 
-      editor.commands.setContent(data.content);
+      editor.commands.setContent(aiTextToHtml(data.content));
       await saveDocument();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Rewrite failed.");

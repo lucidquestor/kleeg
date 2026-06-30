@@ -4,14 +4,33 @@ import { createClient } from "@/lib/supabase/server";
 import type { ModelMode } from "@/lib/types";
 
 const ACTION_PROMPTS: Record<string, string> = {
-  improve: "Improve this writing while keeping the meaning",
-  professional: "Rewrite this in a more professional tone",
-  shorten: "Shorten this while keeping the key points",
-  translate_en: "Translate this to English",
-  translate_he: "Translate this to Hebrew",
-  translate_yi: "Translate this to Yiddish",
-  summarize: "Summarize this",
-  email: "Turn this into a polished email",
+  improve: "Improve this writing while keeping the meaning. Return only the improved text.",
+  professional:
+    "Rewrite this in a more professional tone. Return only the rewritten text.",
+  shorten: "Shorten this while keeping the key points. Return only the shortened text.",
+  translate_en:
+    "Translate this to natural English. Return only the translation.",
+  translate_he:
+    "Translate this to modern Hebrew for everyday business use. Use standard unpointed Hebrew — NO nikud/nekudos/vowel points. Return only the translation.",
+  translate_yi:
+    "Translate this to Yiddish using natural everyday spelling in Hebrew letters. NO nekudos, nikud, or vowel points. Return only the translation.",
+  summarize: "Summarize this clearly. Return only the summary.",
+  email: `Turn this into a well-structured professional email. Use exactly this format with blank lines between sections:
+
+Subject: [clear subject line]
+
+[Greeting],
+
+[Opening sentence]
+
+[Body — 1–3 short paragraphs]
+
+[Closing line]
+
+[Sign-off],
+[Name if known, otherwise leave a placeholder like [Your name]]
+
+Return only the email text. No markdown, no bullet points unless the source clearly needs them.`,
 };
 
 export async function POST(request: Request) {

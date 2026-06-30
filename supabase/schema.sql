@@ -66,6 +66,13 @@ alter table public.projects enable row level security;
 alter table public.project_documents enable row level security;
 alter table public.chat_messages enable row level security;
 
+-- API role grants (required when "Automatically expose new tables" is off)
+grant usage on schema public to anon, authenticated;
+
+grant select, insert, update, delete on public.projects to authenticated;
+grant select, insert, update, delete on public.project_documents to authenticated;
+grant select, insert, update, delete on public.chat_messages to authenticated;
+
 create policy "Users manage own projects"
   on public.projects for all
   using (auth.uid() = user_id)
