@@ -67,7 +67,7 @@ export function ProjectContextPanel({
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex w-full items-center justify-between px-5 py-2 text-left lg:px-8"
+        className="flex w-full items-center justify-between px-4 py-2 text-left lg:px-5"
       >
         <span className="flex items-center gap-2 text-xs text-zinc-500">
           <ActionIcon name="context" className="h-3 w-3" />
@@ -83,10 +83,9 @@ export function ProjectContextPanel({
       </button>
 
       {open ? (
-        <div className="space-y-3 px-5 pb-4 lg:px-8">
+        <div className="space-y-3 px-4 pb-3 lg:px-5">
           <p className="text-xs text-zinc-500">
-            Paste a brief, notes, or upload a .txt file. Kleeg uses this in chat and AI
-            actions for this project.
+            Background notes for the assistant — not part of your document.
           </p>
           <textarea
             value={contextText}

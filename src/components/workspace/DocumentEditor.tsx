@@ -32,10 +32,9 @@ interface PendingCorrection {
 interface DocumentEditorProps {
   projectId: string;
   document: ProjectDocument;
-  onTitleChange?: (title: string) => void;
 }
 
-export function DocumentEditor({ projectId, document, onTitleChange }: DocumentEditorProps) {
+export function DocumentEditor({ projectId, document }: DocumentEditorProps) {
   const { registerEditor } = useWorkspace();
   const [title, setTitle] = useState(document.title);
   const [saving, setSaving] = useState(false);
@@ -293,18 +292,8 @@ export function DocumentEditor({ projectId, document, onTitleChange }: DocumentE
 
   return (
     <div className="workspace-panel flex h-full min-h-0 flex-col">
-      <div className="shrink-0 border-b border-white/10 px-5 py-2.5 lg:px-8">
-        <div className="flex items-center gap-2">
-          <input
-            value={title}
-            onChange={(e) => {
-              setTitle(e.target.value);
-              onTitleChange?.(e.target.value);
-            }}
-            onBlur={() => void saveDocument()}
-            className="min-w-0 flex-1 bg-transparent text-sm font-medium text-white outline-none placeholder:text-zinc-600"
-            placeholder="Untitled"
-          />
+      <div className="shrink-0 border-b border-white/10 px-5 py-2 lg:px-8">
+        <div className="flex items-center justify-end gap-2">
           <EditorActionsMenu
             rewriting={rewriting}
             hasSelection={hasSelection}
@@ -318,7 +307,7 @@ export function DocumentEditor({ projectId, document, onTitleChange }: DocumentE
         </div>
         {statusLine ? (
           <p
-            className={`mt-1.5 text-[11px] ${error ? "text-red-400" : "text-zinc-500"}`}
+            className={`mt-1.5 text-right text-[11px] ${error ? "text-red-400" : "text-zinc-500"}`}
           >
             {statusLine}
           </p>

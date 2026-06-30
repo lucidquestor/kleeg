@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ActionIcon } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
 import type { ProjectDocument } from "@/lib/types";
@@ -11,6 +11,7 @@ interface DocumentTabsProps {
   onSelect: (documentId: string) => void;
   onCreate: () => void;
   onDelete: (documentId: string) => void;
+  onRename: (documentId: string, title: string) => void;
   creating?: boolean;
   deletingId?: string | null;
 }
@@ -21,14 +22,33 @@ export function DocumentTabs({
   onSelect,
   onCreate,
   onDelete,
+  onRename,
   creating,
   deletingId,
 }: DocumentTabsProps) {
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editTitle, setEditTitle] = useState("");
+  const editRef = useRef<HTMLInputElement>(null);
   const canDelete = documents.length > 1;
+
+  useEffect(() => {
+    if (editingId) editRef.current?.select();
+  }, [editingId]);
 
   function displayTitle(title: string) {
     return title === "Main document" ? "Untitled" : title || "Untitled";
+  }
+
+  function startRename(doc: ProjectDocument) {
+    setEditingId(doc.id);
+    setEditTitle(displayTitle(doc.title));
+  }
+
+  function commitRename(documentId: string) {
+    const trimmed = editTitle.trim() || "Untitled";
+    onRename(documentId, trimmed);
+    setEditingId(null);
   }
 
   return (
@@ -36,6 +56,7 @@ export function DocumentTabs({
       {documents.map((doc) => {
         const active = doc.id === activeDocumentId;
         const confirming = confirmDeleteId === doc.id;
+        const editing = editingId === doc.id;
 
         return (
           <div
@@ -67,11 +88,25 @@ export function DocumentTabs({
                   No
                 </button>
               </div>
+            ) : editing ? (
+              <input
+                ref={editRef}
+                value={editTitle}
+                onChange={(e) => setEditTitle(e.target.value)}
+                onBlur={() => commitRename(doc.id)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") commitRename(doc.id);
+                  if (e.key === "Escape") setEditingId(null);
+                }}
+                className="w-28 bg-transparent px-2.5 py-1.5 text-xs font-medium text-white outline-none"
+              />
             ) : (
               <>
                 <button
                   type="button"
                   onClick={() => onSelect(doc.id)}
+                  onDoubleClick={() => startRename(doc)}
+                  title="Double-click to rename"
                   className={cn(
                     "px-2.5 py-1.5 text-xs font-medium transition",
                     active ? "text-white" : "text-zinc-500 group-hover:text-zinc-200",

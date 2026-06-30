@@ -4,7 +4,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { DocumentEditor } from "@/components/workspace/DocumentEditor";
 import { DocumentTabs } from "@/components/workspace/DocumentTabs";
 import { ProjectChat } from "@/components/workspace/ProjectChat";
-import { ProjectContextPanel } from "@/components/workspace/ProjectContextPanel";
 import { WorkspaceProvider } from "@/components/workspace/WorkspaceContext";
 import type { ChatMessage, Project, ProjectDocument } from "@/lib/types";
 import { cn } from "@/lib/cn";
@@ -121,6 +120,19 @@ export function ProjectWorkspace({
     );
   }
 
+  async function handleRenameDocument(documentId: string, title: string) {
+    handleDocumentTitleChange(documentId, title);
+    try {
+      await fetch(`/api/projects/${project.id}/documents/${documentId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title }),
+      });
+    } catch {
+      // title still updated locally
+    }
+  }
+
   async function handleCreateDocument() {
     setCreatingDoc(true);
     try {
@@ -163,22 +175,15 @@ export function ProjectWorkspace({
             onSelect={setActiveDocumentId}
             onCreate={() => void handleCreateDocument()}
             onDelete={(id) => void handleDeleteDocument(id)}
+            onRename={(id, title) => void handleRenameDocument(id, title)}
             creating={creatingDoc}
             deletingId={deletingDocId}
-          />
-          <ProjectContextPanel
-            projectId={project.id}
-            initialContext={contextText}
-            onSaved={setContextText}
           />
           <div className="min-h-0 flex-1 overflow-hidden">
             <DocumentEditor
               key={activeDocument.id}
               projectId={project.id}
               document={activeDocument}
-              onTitleChange={(title) =>
-                handleDocumentTitleChange(activeDocument.id, title)
-              }
             />
           </div>
         </div>
@@ -215,6 +220,8 @@ export function ProjectWorkspace({
             projectId={project.id}
             initialMessages={messages}
             projectContext={projectContext}
+            contextText={contextText}
+            onContextSaved={setContextText}
           />
         </div>
       </div>

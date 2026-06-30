@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ChatComposer, InsertMenu } from "@/components/workspace/ChatComposer";
+import { ProjectContextPanel } from "@/components/workspace/ProjectContextPanel";
 import { CustomSelect } from "@/components/ui/CustomSelect";
 import { useWorkspace } from "@/components/workspace/WorkspaceContext";
 import type { ChatMessage, ModelMode } from "@/lib/types";
@@ -12,6 +13,8 @@ interface ProjectChatProps {
   projectId: string;
   initialMessages: ChatMessage[];
   projectContext?: string;
+  contextText?: string;
+  onContextSaved?: (text: string) => void;
 }
 
 interface UiMessage {
@@ -24,6 +27,8 @@ export function ProjectChat({
   projectId,
   initialMessages,
   projectContext = "",
+  contextText = "",
+  onContextSaved,
 }: ProjectChatProps) {
   const { insertText } = useWorkspace();
   const [messages, setMessages] = useState<UiMessage[]>(
@@ -109,6 +114,12 @@ export function ProjectChat({
           }))}
         />
       </div>
+
+      <ProjectContextPanel
+        projectId={projectId}
+        initialContext={contextText}
+        onSaved={onContextSaved}
+      />
 
       <div className="scroll-subtle flex-1 space-y-3 overflow-y-auto px-4 py-3 lg:px-5">
         {messages.length === 0 && !loading ? (
