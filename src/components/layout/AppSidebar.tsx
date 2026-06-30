@@ -36,7 +36,7 @@ export function AppSidebar({
         </Link>
       </div>
 
-      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto p-4">
+      <div className="scroll-subtle flex min-h-0 flex-1 flex-col overflow-y-auto p-4">
         <p className="text-[10px] font-semibold uppercase tracking-wider text-sidebar-muted">
           Projects
         </p>

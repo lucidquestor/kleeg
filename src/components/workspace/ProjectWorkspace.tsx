@@ -88,7 +88,7 @@ export function ProjectWorkspace({
   return (
     <div className="flex h-screen flex-col overflow-hidden lg:flex-row">
       {/* Editor — scrolls inside panel only */}
-      <div className="min-h-0 min-w-0 flex-1 overflow-hidden p-4 lg:p-5">
+      <div className="min-h-0 min-w-0 flex-1 overflow-hidden">
         <DocumentEditor projectId={project.id} document={projectDocument} />
       </div>
 
@@ -121,7 +121,7 @@ export function ProjectWorkspace({
       {/* Assistant — fixed width, scrolls inside panel only */}
       <div
         style={{ width: chatWidth }}
-        className="flex min-h-[420px] shrink-0 flex-col overflow-hidden border-t border-white/10 p-4 lg:min-h-0 lg:border-l lg:border-t-0 lg:p-5"
+        className="flex min-h-[420px] shrink-0 flex-col overflow-hidden border-t border-white/10 lg:min-h-0 lg:border-l lg:border-t-0"
       >
         <ProjectChat
           projectId={project.id}

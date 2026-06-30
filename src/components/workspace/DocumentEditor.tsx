@@ -201,7 +201,7 @@ export function DocumentEditor({ projectId, document }: DocumentEditorProps) {
 
   return (
     <div className="workspace-panel flex h-full min-h-0 flex-col">
-      <div className="border-b border-white/10 bg-app-panel-hover px-5 py-4">
+      <div className="shrink-0 border-b border-white/10 px-5 py-4 lg:px-8">
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
@@ -241,7 +241,7 @@ export function DocumentEditor({ projectId, document }: DocumentEditorProps) {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto bg-app-panel">
+      <div className="scroll-subtle flex-1 overflow-y-auto">
         <EditorContent editor={editor} />
       </div>
     </div>

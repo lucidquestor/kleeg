@@ -87,7 +87,11 @@
   }
 
   .workspace-panel {
-    @apply flex min-h-0 flex-col overflow-hidden rounded-2xl border border-white/10 bg-app-panel shadow-lg shadow-black/30;
+    @apply flex min-h-0 flex-col overflow-hidden bg-app-bg;
+  }
+
+  .scroll-subtle {
+    @apply overflow-y-auto;
   }
 
   .workspace-sidebar {
@@ -119,7 +123,7 @@
 }
 
 .ProseMirror {
-  @apply min-h-[360px] px-6 py-5 text-[15px] leading-relaxed text-zinc-100 outline-none;
+  @apply min-h-[360px] max-w-3xl px-5 py-6 text-[15px] leading-relaxed text-zinc-100 outline-none lg:px-8 lg:py-8;
 }
 
 .ProseMirror[dir="rtl"] {
@@ -133,4 +137,45 @@
 
 .ProseMirror[dir="rtl"] p.is-editor-empty:first-child::before {
   float: right;
+}
+
+/* Dark app scrollbars — outside @layer so pseudo-elements aren't stripped */
+.workspace-shell,
+.workspace-shell * {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(255 255 255 / 0.18) transparent;
+}
+
+.workspace-shell ::-webkit-scrollbar,
+.workspace-shell *::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.workspace-shell ::-webkit-scrollbar-button,
+.workspace-shell *::-webkit-scrollbar-button {
+  display: none;
+  height: 0;
+  width: 0;
+}
+
+.workspace-shell ::-webkit-scrollbar-track,
+.workspace-shell *::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.workspace-shell ::-webkit-scrollbar-thumb,
+.workspace-shell *::-webkit-scrollbar-thumb {
+  background-color: rgb(255 255 255 / 0.14);
+  border-radius: 9999px;
+}
+
+.workspace-shell ::-webkit-scrollbar-thumb:hover,
+.workspace-shell *::-webkit-scrollbar-thumb:hover {
+  background-color: rgb(255 255 255 / 0.28);
+}
+
+.workspace-shell ::-webkit-scrollbar-corner,
+.workspace-shell *::-webkit-scrollbar-corner {
+  background: transparent;
 }

@@ -84,7 +84,7 @@ export function ProjectChat({
 
   return (
     <div className="workspace-panel flex h-full min-h-0 flex-col">
-      <div className="flex items-center justify-between border-b border-white/10 bg-app-panel-hover px-4 py-4">
+      <div className="flex shrink-0 items-center justify-between border-b border-white/10 px-4 py-4 lg:px-5">
         <div>
           <h2 className="text-sm font-semibold text-white">Assistant</h2>
           <p className="text-xs text-zinc-500">Knows your project context</p>
@@ -110,7 +110,7 @@ export function ProjectChat({
         />
       </div>
 
-      <div className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
+      <div className="scroll-subtle flex-1 space-y-3 overflow-y-auto px-4 py-4 lg:px-5">
         {messages.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-brand-400/30 bg-brand-500/10 px-4 py-10 text-center">
             <p className="text-sm font-medium text-brand-200">Ask Kleeg anything</p>
@@ -145,7 +145,7 @@ export function ProjectChat({
         <div ref={bottomRef} />
       </div>
 
-      <form onSubmit={handleSubmit} className="border-t border-white/10 bg-app-panel p-4">
+      <form onSubmit={handleSubmit} className="shrink-0 border-t border-white/10 px-4 py-4 lg:px-5">
         {error ? (
           <p className="mb-3 rounded-xl bg-red-500/10 px-3 py-2 text-xs text-red-300">{error}</p>
         ) : null}
