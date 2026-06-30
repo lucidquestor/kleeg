@@ -39,7 +39,7 @@ export async function POST(request: Request) {
     const projectId = body.projectId as string | undefined;
     const text = body.text as string | undefined;
     const action = body.action as string | undefined;
-    const mode = (body.mode as ModelMode) ?? "writing";
+    const requestedMode = body.mode as ModelMode | undefined;
 
     if (!projectId || !text?.trim() || !action) {
       return NextResponse.json(
@@ -73,6 +73,10 @@ export async function POST(request: Request) {
     if (!project) {
       return NextResponse.json({ error: "Project not found." }, { status: 404 });
     }
+
+    const mode: ModelMode =
+      requestedMode ??
+      (action.startsWith("translate_") || action === "email" ? "best" : "writing");
 
     const content = await rewriteText(text, prompt, mode);
 
