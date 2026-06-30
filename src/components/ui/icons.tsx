@@ -108,7 +108,7 @@ const paths: Record<string, string> = {
   settings: "M12 15.5a3.5 3.5 0 100-7 3.5 3.5 0 000 7zM19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9c.26.604.852.997 1.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z",
   logout: "M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9",
   plus: "M12 5v14M5 12h14",
-  close: "M6 6l12 12M18 6L6 18",
+  close: "M7 7l10 10M17 7L7 17",
   copy: "M9 15H5a2 2 0 01-2-2V5a2 2 0 012-2h2M15 11V7a2 2 0 00-2-2h-2M17 17H9a2 2 0 01-2-2v-2",
   download: "M12 3v12M7 11l5 5 5-5M5 21h14",
   context: "M4 6h16v12H4V6zm2 2v2h12V8H6zm0 4v4h12v-4H6z",
@@ -118,9 +118,11 @@ const paths: Record<string, string> = {
 export function ActionIcon({
   name,
   className,
+  strokeWidth = 1.75,
 }: {
   name: string;
   className?: string;
+  strokeWidth?: number;
 }) {
   const d = paths[name] ?? paths.sparkles;
   return (
@@ -128,7 +130,7 @@ export function ActionIcon({
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.75"
+      strokeWidth={strokeWidth}
       strokeLinecap="round"
       strokeLinejoin="round"
       className={cn("h-3.5 w-3.5 shrink-0", className)}

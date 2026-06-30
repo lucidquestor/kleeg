@@ -47,7 +47,7 @@ export function DocumentTabs({
           >
             {confirming ? (
               <div className="flex items-center gap-1 px-2 py-1">
-                <span className="text-[10px] text-zinc-400">Delete?</span>
+                <span className="text-[10px] text-zinc-400">Remove?</span>
                 <button
                   type="button"
                   disabled={deletingId === doc.id}
@@ -83,13 +83,13 @@ export function DocumentTabs({
                   <button
                     type="button"
                     onClick={() => setConfirmDeleteId(doc.id)}
-                    aria-label={`Delete ${displayTitle(doc.title)}`}
+                    aria-label={`Close ${displayTitle(doc.title)}`}
                     className={cn(
-                      "mr-1 rounded p-1 text-zinc-600 transition hover:bg-red-500/15 hover:text-red-400",
-                      active ? "opacity-100" : "opacity-0 group-hover:opacity-100",
+                      "mr-1 flex h-4 w-4 items-center justify-center rounded-full text-zinc-600 transition hover:bg-white/10 hover:text-zinc-300",
+                      active ? "opacity-70 hover:opacity-100" : "opacity-0 group-hover:opacity-70",
                     )}
                   >
-                    <ActionIcon name="trash" className="h-3 w-3" />
+                    <ActionIcon name="close" className="h-2.5 w-2.5" strokeWidth={2} />
                   </button>
                 ) : null}
               </>
