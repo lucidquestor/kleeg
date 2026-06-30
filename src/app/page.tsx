@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { KleegMark } from "@/components/ui/icons";
+import { KleegLogo } from "@/components/ui/icons";
 import { siteConfig } from "@/lib/types";
 
 export default function HomePage() {
@@ -7,9 +7,8 @@ export default function HomePage() {
     <div className="min-h-screen hero-gradient">
       <header className="border-b border-border/60 bg-white/70 backdrop-blur-md">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
-          <Link href="/" className="flex items-center gap-2.5">
-            <KleegMark />
-            <span className="text-lg font-semibold tracking-tight text-ink">Kleeg</span>
+          <Link href="/">
+            <KleegLogo />
           </Link>
           <nav className="flex items-center gap-3">
             <Link href="/login" className="btn-secondary">

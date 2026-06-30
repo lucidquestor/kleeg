@@ -1,4 +1,5 @@
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
+import { AppShell } from "@/components/layout/AppShell";
 import { ProjectWorkspace } from "@/components/workspace/ProjectWorkspace";
 import { createClient } from "@/lib/supabase/server";
 import type { ChatMessage, Project, ProjectDocument } from "@/lib/types";
@@ -28,19 +29,11 @@ export default async function ProjectPage({
 }) {
   const { id } = await params;
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect("/login");
-  }
 
   const { data: project } = await supabase
     .from("projects")
     .select("*")
     .eq("id", id)
-    .eq("user_id", user.id)
     .single();
 
   if (!project) {
@@ -66,10 +59,12 @@ export default async function ProjectPage({
   }
 
   return (
-    <ProjectWorkspace
-      project={project as Project}
-      document={document as ProjectDocument}
-      messages={(messages ?? []) as ChatMessage[]}
-    />
+    <AppShell activeProjectId={id}>
+      <ProjectWorkspace
+        project={project as Project}
+        document={document as ProjectDocument}
+        messages={(messages ?? []) as ChatMessage[]}
+      />
+    </AppShell>
   );
 }

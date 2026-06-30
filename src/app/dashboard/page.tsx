@@ -1,5 +1,4 @@
-import { redirect } from "next/navigation";
-import { AppHeader } from "@/components/dashboard/AppHeader";
+import { AppShell } from "@/components/layout/AppShell";
 import { NewProjectForm } from "@/components/dashboard/NewProjectForm";
 import { ProjectCard } from "@/components/dashboard/ProjectCard";
 import { createClient } from "@/lib/supabase/server";
@@ -11,32 +10,21 @@ export const metadata = {
 
 export default async function DashboardPage() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect("/login");
-  }
-
   const { data: projects } = await supabase
     .from("projects")
     .select("*")
-    .eq("user_id", user.id)
     .order("updated_at", { ascending: false });
 
   return (
-    <div className="min-h-screen hero-gradient">
-      <AppHeader />
-      <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+    <AppShell>
+      <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:py-10">
         <div className="mb-8">
           <p className="text-xs font-semibold uppercase tracking-wider text-brand-600">
             Workspace
           </p>
           <h1 className="mt-2 text-3xl font-semibold text-ink">Your projects</h1>
           <p className="mt-2 max-w-xl text-ink-muted">
-            Each project has a document editor, AI assistant, and learns from your
-            corrections.
+            Pick a project from the sidebar or create a new one below.
           </p>
         </div>
 
@@ -59,6 +47,6 @@ export default async function DashboardPage() {
           <NewProjectForm />
         </div>
       </main>
-    </div>
+    </AppShell>
   );
 }

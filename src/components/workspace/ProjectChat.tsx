@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { CustomSelect } from "@/components/ui/CustomSelect";
 import type { ChatMessage, ModelMode } from "@/lib/types";
 import { MODEL_MODE_LABELS } from "@/lib/types";
 import { cn } from "@/lib/cn";
@@ -88,17 +89,25 @@ export function ProjectChat({
           <h2 className="text-sm font-semibold text-ink">Assistant</h2>
           <p className="text-xs text-ink-muted">Knows your project context</p>
         </div>
-        <select
+        <CustomSelect
           value={mode}
-          onChange={(e) => setMode(e.target.value as ModelMode)}
-          className="rounded-lg border border-border bg-white px-2 py-1.5 text-xs text-ink shadow-sm"
-        >
-          {Object.entries(MODEL_MODE_LABELS).map(([value, label]) => (
-            <option key={value} value={value}>
-              {label}
-            </option>
-          ))}
-        </select>
+          onChange={setMode}
+          ariaLabel="AI model mode"
+          options={(
+            Object.entries(MODEL_MODE_LABELS) as [ModelMode, string][]
+          ).map(([value, label]) => ({
+            value,
+            label,
+            description:
+              value === "auto"
+                ? "Balanced default"
+                : value === "fast"
+                  ? "Quick responses"
+                  : value === "best"
+                    ? "Deep thinking"
+                    : "Polished prose",
+          }))}
+        />
       </div>
 
       <div className="flex-1 space-y-3 overflow-y-auto px-4 py-4">

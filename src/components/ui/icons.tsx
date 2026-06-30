@@ -1,4 +1,79 @@
+import type { SVGProps } from "react";
 import { cn } from "@/lib/cn";
+
+export function KleegLogo({
+  className,
+  markClassName,
+  showWordmark = true,
+  wordmarkClassName,
+}: {
+  className?: string;
+  markClassName?: string;
+  showWordmark?: boolean;
+  wordmarkClassName?: string;
+}) {
+  return (
+    <div className={cn("flex items-center gap-2.5", className)}>
+      <KleegMark className={markClassName} />
+      {showWordmark ? (
+        <span className={cn("text-lg font-semibold tracking-tight", wordmarkClassName)}>
+          Kleeg
+        </span>
+      ) : null}
+    </div>
+  );
+}
+
+export function KleegMark({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 40 40"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={cn("h-9 w-9 shrink-0", className)}
+      aria-hidden
+    >
+      <rect width="40" height="40" rx="11" fill="url(#kleeg-mark-bg)" />
+      <path
+        d="M12 28V12h4.5l5.2 9.4V12H26v16h-4.4l-5.3-9.6V28H12z"
+        fill="white"
+      />
+      <circle cx="30" cy="11" r="3" fill="#FBBF24" opacity="0.95" />
+      <defs>
+        <linearGradient id="kleeg-mark-bg" x1="8" y1="4" x2="34" y2="36">
+          <stop stopColor="#8B5CF6" />
+          <stop offset="1" stopColor="#6D28D9" />
+        </linearGradient>
+      </defs>
+    </svg>
+  );
+}
+
+export function KleegLogoSvg(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 120 40" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+      <rect width="40" height="40" rx="11" fill="url(#kleeg-logo-bg)" />
+      <path d="M12 28V12h4.5l5.2 9.4V12H26v16h-4.4l-5.3-9.6V28H12z" fill="white" />
+      <circle cx="30" cy="11" r="3" fill="#FBBF24" />
+      <text
+        x="48"
+        y="27"
+        fill="currentColor"
+        fontFamily="system-ui, sans-serif"
+        fontSize="22"
+        fontWeight="600"
+      >
+        Kleeg
+      </text>
+      <defs>
+        <linearGradient id="kleeg-logo-bg" x1="8" y1="4" x2="34" y2="36">
+          <stop stopColor="#8B5CF6" />
+          <stop offset="1" stopColor="#6D28D9" />
+        </linearGradient>
+      </defs>
+    </svg>
+  );
+}
 
 const paths: Record<string, string> = {
   sparkles:
@@ -10,6 +85,8 @@ const paths: Record<string, string> = {
     "M12 2a10 10 0 100 20 10 10 0 000-20zm7.9 9H15.1a16.5 16.5 0 000-2h4.8a8 8 0 010 2zM12 18a14 14 0 010-4h4.9a8 8 0 01-3.5 3.5A14 14 0 0112 18z",
   list: "M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01",
   mail: "M4 6h16v12H4V6zm2 2l6 4 6-4",
+  trash: "M4 7h16M9 7V5h6v2M8 7l1 14h6l1-14",
+  chevron: "M6 9l6 6 6-6",
 };
 
 export function ActionIcon({
@@ -33,18 +110,5 @@ export function ActionIcon({
     >
       <path d={d} />
     </svg>
-  );
-}
-
-export function KleegMark({ className }: { className?: string }) {
-  return (
-    <div
-      className={cn(
-        "flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-accent-400 to-brand-600 text-sm font-bold text-white shadow-sm",
-        className,
-      )}
-    >
-      K
-    </div>
   );
 }
