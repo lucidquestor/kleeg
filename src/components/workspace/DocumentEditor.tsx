@@ -200,7 +200,7 @@ export function DocumentEditor({ projectId, document }: DocumentEditorProps) {
   }
 
   return (
-    <div className="workspace-panel h-full">
+    <div className="workspace-panel flex h-full min-h-0 flex-col">
       <div className="border-b border-white/10 bg-app-panel-hover px-5 py-4">
         <input
           value={title}

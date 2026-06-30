@@ -83,7 +83,7 @@ export function ProjectChat({
   }
 
   return (
-    <div className="workspace-panel h-full lg:max-h-[calc(100vh-2.5rem)]">
+    <div className="workspace-panel flex h-full min-h-0 flex-col">
       <div className="flex items-center justify-between border-b border-white/10 bg-app-panel-hover px-4 py-4">
         <div>
           <h2 className="text-sm font-semibold text-white">Assistant</h2>
