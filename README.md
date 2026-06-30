@@ -23,41 +23,51 @@ Kleeg is a web-based AI workspace where you create projects, edit documents, cha
 - OpenAI API (server-side only)
 - TipTap editor
 
-## Setup
+## Deploy to the web (recommended)
 
-### 1. Install dependencies
+Everything runs in the cloud — no local server needed.
+
+### Step 1 — Supabase (database + auth)
+
+1. Create a free project at [supabase.com](https://supabase.com).
+2. Open **SQL Editor** and run `supabase/schema.sql`.
+3. Enable **Authentication → Providers → Email**.
+4. Under **Authentication → URL Configuration**, set:
+   - **Site URL:** your Vercel URL (e.g. `https://kleeg.vercel.app`)
+   - **Redirect URLs:** `https://kleeg.vercel.app/auth/callback`
+5. Copy from **Project Settings → API**:
+   - Project URL → `NEXT_PUBLIC_SUPABASE_URL`
+   - anon public key → `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+
+### Step 2 — Vercel (hosting)
+
+1. Open [Import kleeg on Vercel](https://vercel.com/new/import?s=https://github.com/lucidquestor/kleeg).
+2. Sign in with GitHub if prompted.
+3. Keep defaults (Next.js, root directory empty).
+4. Add these **Environment Variables** before deploying:
+
+| Variable | Value |
+|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | Your Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Your Supabase anon key |
+| `OPENAI_API_KEY` | Your OpenAI API key |
+| `NEXT_PUBLIC_APP_URL` | Your Vercel URL (e.g. `https://kleeg.vercel.app`) |
+
+5. Click **Deploy**. Vercel gives you a live URL in ~2 minutes.
+
+### Step 3 — Finish Supabase redirect
+
+After Vercel deploys, copy your real URL and update Supabase **URL Configuration** if the domain differs from what you entered in Step 1.
+
+---
+
+## Local development (optional)
 
 ```bash
 npm install
-```
-
-### 2. Create a Supabase project
-
-1. Go to [supabase.com](https://supabase.com) and create a project.
-2. In **SQL Editor**, run the schema in `supabase/schema.sql`.
-3. In **Authentication → Providers**, enable Email.
-4. In **Authentication → URL Configuration**, add:
-   - Site URL: `http://localhost:3000`
-   - Redirect URL: `http://localhost:3000/auth/callback`
-
-### 3. Configure environment
-
-Copy `.env.example` to `.env.local` and fill in:
-
-```env
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-OPENAI_API_KEY=sk-...
-NEXT_PUBLIC_APP_URL=http://localhost:3000
-```
-
-### 4. Run locally
-
-```bash
+cp .env.example .env.local   # fill in keys
 npm run dev
 ```
-
-Open [http://localhost:3000](http://localhost:3000).
 
 ## Scripts
 
